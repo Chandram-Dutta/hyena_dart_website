@@ -45,7 +45,7 @@ const mcpCall = `hyena_analyze({
             Read the docs
           </a>
         </div>
-        <p class="version-note">v1.1.2 · Dart SDK 3.10+ · MIT licensed · local-first</p>
+        <p class="version-note">v1.2.0 · Dart SDK 3.10+ · MIT licensed · local-first</p>
       </div>
 
       <figure class="terminal-wrap" aria-label="Example Hyena report">
@@ -102,7 +102,7 @@ COMPLEXITY
             </span>
             <div>
               <p class="section-kicker">Safe AI / MCP</p>
-              <p class="mcp-status">Available in v1.1.2</p>
+              <p class="mcp-status">Introduced in v1.1.2</p>
             </div>
           </div>
           <h2>One bounded tool for AI-assisted review.</h2>
@@ -142,6 +142,52 @@ COMPLEXITY
           </div>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section class="home-section" id="v1-2-0">
+    <div class="section-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Available in v1.2.0</p>
+          <h2>Three practical additions in v1.2.0.</h2>
+        </div>
+        <p>
+          Version checks, package-aware workspace analysis, and explicit
+          framework roots are included in the published v1.2.0 package.
+        </p>
+      </div>
+      <div class="workflow-grid">
+        <article class="workflow-step">
+          <span class="step-number">01 / Identify</span>
+          <h3>Print the running version</h3>
+          <p>Both executables report their package version; release checks prevent package/runtime drift.</p>
+          <code>hyena_dart --version</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">02 / Boundaries</span>
+          <h3>Analyze Dart workspaces</h3>
+          <p>Discover root, nested, and glob members, then report each package once with its nearest config.</p>
+          <code>hyena_dart analyze .</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">03 / Reachability</span>
+          <h3>Declare runtime roots</h3>
+          <p>Keep framework registrations and annotated declarations reachable without broad exclusions.</p>
+          <code>entry_points: [AppRoutes]</code>
+        </article>
+      </div>
+      <nav class="section-followup" aria-label="Hyena Dart v1.2.0 feature documentation">
+        <a class="plain-link" href="/docs/cli-reference/#version-output">
+          Version output <span aria-hidden="true">→</span>
+        </a>
+        <a class="plain-link" href="/docs/workspaces/">
+          Workspace analysis <span aria-hidden="true">→</span>
+        </a>
+        <a class="plain-link" href="/docs/configuration/#framework-and-generated-code-entry-roots">
+          Entry roots <span aria-hidden="true">→</span>
+        </a>
+      </nav>
     </div>
   </section>
 

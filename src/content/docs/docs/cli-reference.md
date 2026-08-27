@@ -5,11 +5,35 @@ description: Commands, flags, defaults, and examples for the Hyena Dart executab
 
 The primary analysis CLI executable is `hyena_dart`. Source checkouts can use `dart run bin/hyena_dart.dart` instead; project dependencies can use `dart run hyena_dart`.
 
-Hyena Dart 1.1.2 adds a separate, bounded `hyena_mcp` executable. It does not expose the regular CLI flags or reporters; see [Safe AI and MCP](/docs/safe-ai-mcp/) for its exact contract.
+Hyena Dart 1.1.2 introduced a separate, bounded `hyena_mcp` executable. It does not expose the regular CLI flags or reporters; see [Safe AI and MCP](/docs/safe-ai-mcp/) for its exact contract.
 
 ```text
 hyena_dart <command> [options] [path]
 ```
+
+## Version output
+
+:::note[Available in v1.2.0]
+Both version flags are included in Hyena Dart 1.2.0 and later. The MCP server itself was introduced in v1.1.2; its `--version` flag was added in v1.2.0.
+:::
+
+Both executables can print their package version and exit without starting analysis or an MCP session:
+
+```shell
+hyena_dart --version
+hyena_mcp --version
+```
+
+The output is one line with the executable name followed by the package version:
+
+```text
+hyena_dart 1.2.0
+hyena_mcp 1.2.0
+```
+
+`hyena_mcp --version` does not require `--root`. This makes it safe to identify the executable that an MCP client will launch before granting access to a project.
+
+Hyena's release checks compare the runtime version with `pubspec.yaml` during CI and again before publication. A mismatch stops the release, so a published executable should not report a version different from its package.
 
 The first positional value is a Dart file or directory target. It defaults to `.`. Additional positional values are not used.
 

@@ -67,6 +67,8 @@ Dead-code analysis asks the official Dart analyzer to resolve every included Dar
 ```shell
 hyena_dart --help
 hyena_dart complexity --help
+hyena_dart --version
+hyena_mcp --version
 ```
 
-You should see the `analyze`, `dead-code`, and `complexity` commands.
+You should see the `analyze`, `dead-code`, and `complexity` commands. With Hyena Dart 1.2.0, the version commands print `hyena_dart 1.2.0` and `hyena_mcp 1.2.0` respectively.

@@ -63,6 +63,7 @@ export default defineConfig({
           items: [
             { slug: 'docs/cli-reference' },
             { slug: 'docs/configuration' },
+            { slug: 'docs/workspaces' },
             { slug: 'docs/reports' },
             { slug: 'docs/ci' },
             { slug: 'docs/safe-ai-mcp' },

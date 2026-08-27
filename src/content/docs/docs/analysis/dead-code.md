@@ -43,6 +43,18 @@ References inside a root or another reachable declaration make their target decl
 
 When an analyzer element is unavailable, Hyena falls back conservatively to matching simple and qualified names. Unresolved dynamic member access retains same-named member declarations because the runtime target cannot be proven statically. Element-based references remain the primary path.
 
+## Configured framework roots
+
+:::note[Available in v1.2.0]
+`hyena.dead_code.entry_points` and `entry_point_annotations` are included in Hyena Dart 1.2.0 and later.
+:::
+
+Use configured roots when a router, dependency-injection system, plugin registry, serializer, or generated callback reaches declarations without a resolvable Dart reference. A matched declaration becomes a root, and normal graph traversal keeps the declarations it calls or references.
+
+Matching a type container also preserves that container's public members. Unrelated private members and declarations outside the rooted dependency graph remain candidates, so this is narrower than excluding a file or package.
+
+Both lists default to empty. See [Framework and generated-code entry roots](/docs/configuration/#framework-and-generated-code-entry-roots) for the YAML example and exact simple, qualified, and annotation matching rules.
+
 ## Export handling
 
 With the default `ignore_exports: true`, Hyena treats public declarations in directly importable package libraries as API roots. A file under `lib/` is directly importable unless its package-relative path begins with `src/`. Declarations in a library's `part` files inherit that library's visibility.

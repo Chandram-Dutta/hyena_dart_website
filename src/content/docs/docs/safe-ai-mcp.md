@@ -9,7 +9,7 @@ Hyena can expose source analysis to AI clients over the Model Context Protocol (
 
 The tool reads Dart source under one configured project root and returns structured dead-code and complexity findings. It does not modify the project or execute target code.
 
-:::note[Available in v1.1.2]
+:::note[MCP server available since v1.1.2]
 The `hyena_mcp` executable and its bounded `hyena_analyze` tool are included in Hyena Dart 1.1.2 and later.
 :::
 
@@ -21,6 +21,10 @@ Activate Hyena Dart 1.1.2 or later and confirm that the MCP executable is availa
 dart pub global activate hyena_dart
 hyena_mcp --help
 ```
+
+:::note[Version flag available in v1.2.0]
+`hyena_mcp --version` is included in Hyena Dart 1.2.0 and later and does not require `--root`. The MCP server itself was introduced in v1.1.2. See [Version output](/docs/cli-reference/#version-output).
+:::
 
 Start the server with `--root` set to the absolute path of one Dart or Flutter project. A typical MCP client entry is:
 
@@ -100,6 +104,16 @@ For each call, Hyena:
 7. sorts findings by path, line, and rule before returning the bounded result.
 
 Only one analysis request runs at a time. A second overlapping call receives an error instead of being queued.
+
+## Dart workspace roots
+
+:::note[Workspace aggregation available in v1.2.0]
+Package-aware Dart workspace analysis through MCP is included in Hyena Dart 1.2.0 and later.
+:::
+
+When the configured MCP root's `pubspec.yaml` declares `workspace`, a request for `.` aggregates the root package and every valid member. Finding paths remain relative to the configured workspace root, and the existing MCP limits apply to the complete request.
+
+Workspace support does not change the one-tool interface, permit a broader root, or expose arbitrary configuration. See [Workspaces and monorepos](/docs/workspaces/) for member validation, per-package configuration, and package-scoped output behavior.
 
 ## Structured result
 

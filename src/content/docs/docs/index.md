@@ -20,6 +20,8 @@ It analyzes a Dart file or recursively scans a directory and can write console, 
 | Pick an installation model | [Installation](/docs/installation/) |
 | Look up a command or flag | [CLI reference](/docs/cli-reference/) |
 | Exclude files or change thresholds | [Configuration](/docs/configuration/) |
+| Analyze a Dart workspace or monorepo | [Workspaces and monorepos](/docs/workspaces/) |
+| Preserve framework or generated entry roots | [Framework entry roots](/docs/configuration/#framework-and-generated-code-entry-roots) |
 | Understand a finding | [Dead-code analysis](/docs/analysis/dead-code/) or [complexity analysis](/docs/analysis/complexity/) |
 | Consume or publish a report | [Report formats](/docs/reports/) |
 | Use results in automation | [CI and automation](/docs/ci/) |
@@ -40,16 +42,27 @@ hyena:
     ignore_main: true
     ignore_exports: true
     ignore_private: false
+    entry_points: []
+    entry_point_annotations: []
 ```
 
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs cover Hyena Dart 1.1.2. Features from the current `main` branch that are not yet published are explicitly marked as unreleased.
+These docs cover Hyena Dart 1.2.0, the current published release.
 :::
+
+## Available in v1.2.0
+
+Hyena Dart 1.2.0 adds:
+
+- [`hyena_dart --version` and `hyena_mcp --version`](/docs/cli-reference/#version-output), with release checks that keep runtime output aligned with the package version;
+- [package-scoped Dart workspace analysis](/docs/workspaces/) with workspace-relative findings; and
+- [configured declaration and annotation entry roots](/docs/configuration/#framework-and-generated-code-entry-roots) for framework- or generated-code reachability.
 
 ## Source and package
 
 - [Source repository](https://github.com/Chandram-Dutta/hyena_dart)
 - [Package on pub.dev](https://pub.dev/packages/hyena_dart)
+- [v1.2.0 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.0)
 - [Issue tracker](https://github.com/Chandram-Dutta/hyena_dart/issues)

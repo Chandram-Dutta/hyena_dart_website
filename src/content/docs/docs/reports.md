@@ -118,6 +118,16 @@ hyena_dart analyze lib -f html -o report.html
 
 The HTML reporter lists all findings it receives. Keep reports private when source paths or declaration names are sensitive.
 
+## Workspace reports
+
+:::note[Available in v1.2.0]
+Package-scoped Dart workspace reporting is included in Hyena Dart 1.2.0 and later.
+:::
+
+For a target root that declares `workspace`, console, JSON, Markdown, and HTML preserve a separate result section for the root package and each member. Workspace JSON adds `workspace.packageCount` and a `packages` array.
+
+SARIF locations, baseline fingerprint paths, and MCP finding paths use the common workspace root rather than an absolute member path. See [Workspaces and monorepos](/docs/workspaces/#package-scoped-reports) for boundary and configuration behavior.
+
 ## SARIF
 
 SARIF 2.1 is intended for code-scanning systems and editor integrations. Hyena emits rules for dead code and each complexity threshold, physical source locations, finding properties, and stable partial fingerprints.
