@@ -5,7 +5,7 @@ description: Commands, flags, defaults, and examples for the Hyena Dart executab
 
 The primary analysis CLI executable is `hyena_dart`. Source checkouts can use `dart run bin/hyena_dart.dart` instead; project dependencies can use `dart run hyena_dart`.
 
-The unreleased MCP integration adds a separate, bounded `hyena_mcp` executable. It does not expose the regular CLI flags or reporters; see [Safe AI and MCP](/docs/safe-ai-mcp/) for its exact contract.
+Hyena Dart 1.1.2 adds a separate, bounded `hyena_mcp` executable. It does not expose the regular CLI flags or reporters; see [Safe AI and MCP](/docs/safe-ai-mcp/) for its exact contract.
 
 ```text
 hyena_dart <command> [options] [path]

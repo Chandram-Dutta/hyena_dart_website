@@ -9,13 +9,13 @@ Hyena can expose source analysis to AI clients over the Model Context Protocol (
 
 The tool reads Dart source under one configured project root and returns structured dead-code and complexity findings. It does not modify the project or execute target code.
 
-:::caution[Unreleased after v1.1.1]
-This page documents a current source change on top of Hyena Dart 1.1.1. The `hyena_mcp` executable is not in the v1.1.1 pub.dev archive. The global-install setup below applies once a package containing this change is published.
+:::note[Available in v1.1.2]
+The `hyena_mcp` executable and its bounded `hyena_analyze` tool are included in Hyena Dart 1.1.2 and later.
 :::
 
 ## Configure an MCP client
 
-After activating a release that includes the MCP executable:
+Activate Hyena Dart 1.1.2 or later and confirm that the MCP executable is available:
 
 ```shell
 dart pub global activate hyena_dart

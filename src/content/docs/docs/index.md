@@ -45,7 +45,7 @@ hyena:
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs cover Hyena Dart 1.1.1. Pages explicitly marked **Unreleased**, including Safe AI / MCP, document current source changes intended for a later package release.
+These docs cover Hyena Dart 1.1.2. Features from the current `main` branch that are not yet published are explicitly marked as unreleased.
 :::
 
 ## Source and package
