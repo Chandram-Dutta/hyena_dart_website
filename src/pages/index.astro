@@ -1,0 +1,285 @@
+---
+import FileX from '@lucide/astro/icons/file-x';
+import Gauge from '@lucide/astro/icons/gauge';
+import Network from '@lucide/astro/icons/network';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import logo from '../assets/hyena-logo.webp';
+
+const title = 'Hyena Dart — dead-code and complexity analysis';
+const description =
+  'Find unused declarations and measure complexity in Dart and Flutter projects with a configurable AST-based CLI.';
+---
+
+<BaseLayout {title} {description}>
+  <section class="hero">
+    <div class="section-shell hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Static analysis for Dart + Flutter</p>
+        <h1>Find unused code. Measure the hard parts.</h1>
+        <p class="hero-lede">
+          Hyena resolves your Dart AST to trace declaration reachability, then
+          measures function-level complexity. Run it from the terminal, emit a
+          report, or call the analyzers from Dart.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="/docs/getting-started/">
+            Run your first analysis <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="button button-secondary" href="/docs/">
+            Read the docs
+          </a>
+        </div>
+        <p class="version-note">Dart SDK 3.10+ · MIT licensed · local-first</p>
+      </div>
+
+      <figure class="terminal-wrap" aria-label="Example Hyena report">
+        <div class="logo-card" aria-hidden="true">
+          <img
+            src={logo.src}
+            width={logo.width}
+            height={logo.height}
+            alt=""
+            loading="eager"
+          />
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span>hyena / report</span>
+            <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+          <pre><code><span class="prompt">$</span> hyena_dart analyze lib --no-color
+
+HYENA CODE ANALYSIS REPORT
+────────────────────────────────
+<span class="label">Target:</span> lib
+
+DEAD CODE
+<span class="label">Total declarations:</span> 204
+<span class="label">Unused entities:</span>     <span class="success">0</span>
+<span class="success">✓ No dead code detected</span>
+
+COMPLEXITY
+<span class="label">Files:</span>                 17
+<span class="label">Functions:</span>             251
+<span class="label">Threshold violations:</span> <span class="warning">5</span></code></pre>
+        </div>
+        <div class="quick-command">
+          <code>dart pub global activate hyena_dart</code>
+          <button
+            class="copy-button"
+            type="button"
+            data-copy="dart pub global activate hyena_dart"
+            aria-label="Copy install command"
+          >Copy</button>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">The short path</p>
+          <h2>From install to report in three commands.</h2>
+        </div>
+        <p>
+          Use the defaults first. Add a config only when generated files,
+          public exports, or your team's complexity limits need different
+          treatment.
+        </p>
+      </div>
+      <div class="workflow-grid">
+        <article class="workflow-step">
+          <span class="step-number">01 / Install</span>
+          <h3>Activate the CLI</h3>
+          <p>Install the published executable into your Dart global cache.</p>
+          <code>dart pub global activate hyena_dart</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">02 / Prepare</span>
+          <h3>Resolve your package</h3>
+          <p>Dead-code analysis needs analyzer resolution for every included file.</p>
+          <code>dart pub get</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">03 / Analyze</span>
+          <h3>Point Hyena at a path</h3>
+          <p>Run both analyzers and print the default console report.</p>
+          <code>hyena_dart analyze .</code>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-shell analysis-layout">
+      <div class="analysis-intro">
+        <p class="section-kicker">Analysis surface</p>
+        <h2>Two passes, one report.</h2>
+        <p>
+          Dead-code analysis follows resolved references from roots. Complexity
+          analysis parses each function, method, constructor, and closure into
+          a small set of reviewable metrics.
+        </p>
+        <a class="plain-link" href="/docs/analysis/dead-code/">
+          How analysis works <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="capability-list">
+        <article class="capability-row">
+          <span class="capability-icon" aria-hidden="true">
+            <Network size={21} stroke-width={1.8} />
+          </span>
+          <div>
+            <h3>Reachability-based dead code</h3>
+            <p>
+              Reports declarations that cannot be reached from entry points,
+              overrides, top-level references, and configured export roots.
+            </p>
+            <ul class="tag-list" aria-label="Supported dead-code entities">
+              <li>classes</li><li>mixins</li><li>extensions</li>
+              <li>enums</li><li>methods</li><li>fields</li><li>typedefs</li>
+            </ul>
+          </div>
+        </article>
+        <article class="capability-row">
+          <span class="capability-icon" aria-hidden="true">
+            <Gauge size={21} stroke-width={1.8} />
+          </span>
+          <div>
+            <h3>Function-level complexity</h3>
+            <p>
+              Measures control-flow paths, nesting, parameters, physical LOC,
+              Halstead volume, and a normalized maintainability index.
+            </p>
+            <ul class="tag-list" aria-label="Complexity metrics">
+              <li>cyclomatic</li><li>nesting</li><li>parameters</li>
+              <li>LOC</li><li>Halstead</li><li>MI</li>
+            </ul>
+          </div>
+        </article>
+        <article class="capability-row">
+          <span class="capability-icon" aria-hidden="true">
+            <FileX size={21} stroke-width={1.8} />
+          </span>
+          <div>
+            <h3>Predictable exclusions</h3>
+            <p>
+              Custom glob patterns apply on top of built-in exclusions for
+              common generated Dart outputs and <code>generated</code> directories.
+            </p>
+            <ul class="tag-list" aria-label="Built-in excluded files">
+              <li>*.g.dart</li><li>*.freezed.dart</li>
+              <li>*.mocks.dart</li><li>generated/</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Output</p>
+          <h2>Read it now or pass it on.</h2>
+        </div>
+        <p>
+          Every command can write to stdout or a file. The selected reporter
+          changes presentation, not the analysis itself.
+        </p>
+      </div>
+      <div class="output-grid">
+        <article class="output-item">
+          <span class="table-label">Default</span>
+          <h3>Console</h3>
+          <p>Compact summaries and the first 20 findings, with optional ANSI color.</p>
+        </article>
+        <article class="output-item">
+          <span class="table-label">Automation</span>
+          <h3>JSON</h3>
+          <p>Structured summaries, thresholds, entities, files, and function metrics.</p>
+        </article>
+        <article class="output-item">
+          <span class="table-label">Review</span>
+          <h3>Markdown</h3>
+          <p>Tables and collapsible file sections that fit issue and pull-request workflows.</p>
+        </article>
+        <article class="output-item">
+          <span class="table-label">Share</span>
+          <h3>HTML</h3>
+          <p>A standalone report with summary cards and detailed violation tables.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-shell reality-check">
+      <div>
+        <p class="section-kicker">Operational notes</p>
+        <h2>Know what the result means.</h2>
+        <p>
+          Hyena is a focused analyzer, not a replacement for the Dart compiler,
+          lints, tests, or runtime coverage.
+        </p>
+      </div>
+      <ul class="reality-list">
+        <li>
+          <span class="check-mark" aria-hidden="true">01</span>
+          <span><strong>Resolve first.</strong> Dead-code analysis stops if an included Dart file has a resolution error.</span>
+        </li>
+        <li>
+          <span class="check-mark" aria-hidden="true">02</span>
+          <span><strong>Thresholds are strict.</strong> A value equal to its configured limit is allowed; only greater values are violations.</span>
+        </li>
+        <li>
+          <span class="check-mark" aria-hidden="true">03</span>
+          <span><strong>Exports are conservative by default.</strong> Public API exposed by direct export directives is treated as reachable.</span>
+        </li>
+        <li>
+          <span class="check-mark" aria-hidden="true">04</span>
+          <span><strong>CI gating is yours to define.</strong> Findings are report data; choose which JSON counts should fail your build.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="section-shell">
+      <div class="cta-panel">
+        <div>
+          <p class="section-kicker">Documentation</p>
+          <h2>Start with the defaults. Tune with evidence.</h2>
+        </div>
+        <div class="cta-actions">
+          <a class="button button-primary" href="/docs/getting-started/">Getting started</a>
+          <a class="button button-secondary" href="/docs/configuration/">Configuration</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy]');
+
+  for (const button of copyButtons) {
+    button.addEventListener('click', async () => {
+      const value = button.dataset.copy;
+      if (!value) return;
+
+      try {
+        await navigator.clipboard.writeText(value);
+        button.textContent = 'Copied';
+        window.setTimeout(() => {
+          button.textContent = 'Copy';
+        }, 1600);
+      } catch {
+        button.textContent = 'Select';
+      }
+    });
+  }
+</script>

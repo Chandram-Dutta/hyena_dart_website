@@ -1,0 +1,132 @@
+:root {
+  /* Starlight appends its own generic system fallbacks to these variables. */
+  --sl-font: Inter, "Segoe UI", Arial;
+  --sl-font-mono: "SFMono-Regular", Consolas, "Liberation Mono";
+  --sl-color-accent-low: #d9f3f5;
+  --sl-color-accent: #08758c;
+  --sl-color-accent-high: #07384a;
+  --sl-color-white: #081b2c;
+  --sl-color-gray-1: #193145;
+  --sl-color-gray-2: #365064;
+  --sl-color-gray-3: #617485;
+  --sl-color-gray-4: #9aa7ad;
+  --sl-color-gray-5: #d3d5cf;
+  --sl-color-gray-6: #e8e5dc;
+  --sl-color-black: #f8f5ed;
+  --sl-content-width: 50rem;
+  --sl-text-h1: clamp(2.35rem, 5vw, 3.6rem);
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #123a4b;
+  --sl-color-accent: #67d4e5;
+  --sl-color-accent-high: #d9f8fb;
+  --sl-color-white: #f7f4ec;
+  --sl-color-gray-1: #e2edf0;
+  --sl-color-gray-2: #b8cbd2;
+  --sl-color-gray-3: #829ba8;
+  --sl-color-gray-4: #506977;
+  --sl-color-gray-5: #263e4c;
+  --sl-color-gray-6: #142b39;
+  --sl-color-black: #071a29;
+}
+
+body {
+  /* Apply the stack directly to avoid Chromium expanding generic fallbacks
+     between Starlight's custom and system font variables. */
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background-image:
+    linear-gradient(rgba(8, 27, 44, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 27, 44, 0.022) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+:root[data-theme='dark'] body {
+  background-image:
+    linear-gradient(rgba(103, 212, 229, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 212, 229, 0.022) 1px, transparent 1px);
+}
+
+header.header {
+  border-bottom-color: color-mix(in srgb, var(--sl-color-gray-5), transparent 15%);
+  backdrop-filter: blur(16px);
+}
+
+.site-title {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.site-title img {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.25rem;
+}
+
+.sidebar-pane {
+  background: color-mix(in srgb, var(--sl-color-black), transparent 5%);
+}
+
+.sidebar-content a[aria-current='page'] {
+  font-weight: 750;
+}
+
+.content-panel + .content-panel {
+  border-top-color: var(--sl-color-gray-5);
+}
+
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3 {
+  letter-spacing: -0.035em;
+}
+
+.sl-markdown-content h1 {
+  line-height: 1.05;
+}
+
+.sl-markdown-content h2 {
+  padding-top: 0.55rem;
+}
+
+.sl-markdown-content a:not(.sl-link-button) {
+  text-underline-offset: 0.2em;
+}
+
+.sl-markdown-content table {
+  display: table;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.sl-markdown-content th {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-1);
+  font-family: var(--sl-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content code:not(:where(.expressive-code *)) {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.18rem;
+  background: var(--sl-color-gray-6);
+}
+
+.expressive-code .frame {
+  box-shadow: 5px 5px 0 color-mix(in srgb, var(--sl-color-gray-4), transparent 75%);
+}
+
+.starlight-aside {
+  border-radius: 0.2rem;
+}
+
+.pagination-links a {
+  border-radius: 0.25rem;
+}
+
+@media (max-width: 50rem) {
+  .sl-markdown-content table {
+    display: block;
+  }
+}
