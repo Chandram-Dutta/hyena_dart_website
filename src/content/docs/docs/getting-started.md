@@ -35,6 +35,12 @@ The optional path is the first positional argument. If it is omitted, Hyena uses
 hyena_dart analyze lib
 ```
 
+You can also inspect one Dart file while iterating:
+
+```shell
+hyena_dart analyze lib/src/cache.dart
+```
+
 The console report contains:
 
 - declaration and unused-entity counts;
@@ -83,10 +89,19 @@ For data processing or CI, choose JSON instead:
 hyena_dart analyze lib --format=json --output=hyena-report.json
 ```
 
+To make findings enforceable without failing on existing debt, create a baseline once and commit it:
+
+```shell
+hyena_dart analyze lib --write-baseline=hyena-baseline.json
+hyena_dart analyze lib \
+  --baseline=hyena-baseline.json \
+  --fail-on=dead-code,complexity
+```
+
 ## Read the result correctly
 
 - A threshold is violated only when a metric is **greater than** its limit. A cyclomatic score of 20 does not violate the default threshold of 20.
-- The CLI reports findings but does not use finding counts as a build-failure policy. See [CI and automation](/docs/ci/) to define one.
+- The CLI returns 0 for findings by default. Use `--fail-on` to select which finding categories should return exit code 1. See [CI and automation](/docs/ci/).
 - Dead-code findings are static reachability results. Reflection, generated registration, and behavior outside the scanned source can require exclusions or manual review.
 
 Next: use the [CLI reference](/docs/cli-reference/) or read how [dead-code reachability](/docs/analysis/dead-code/) works.

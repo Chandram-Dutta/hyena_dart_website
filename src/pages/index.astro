@@ -29,7 +29,7 @@ const description =
             Read the docs
           </a>
         </div>
-        <p class="version-note">Dart SDK 3.10+ · MIT licensed · local-first</p>
+        <p class="version-note">v1.1.0 · Dart SDK 3.10+ · MIT licensed · local-first</p>
       </div>
 
       <figure class="terminal-wrap" aria-label="Example Hyena report">
@@ -199,8 +199,8 @@ COMPLEXITY
         </article>
         <article class="output-item">
           <span class="table-label">Automation</span>
-          <h3>JSON</h3>
-          <p>Structured summaries, thresholds, entities, files, and function metrics.</p>
+          <h3>JSON + SARIF</h3>
+          <p>Structured metrics for custom policies and SARIF 2.1 for code-scanning systems.</p>
         </article>
         <article class="output-item">
           <span class="table-label">Review</span>
@@ -237,11 +237,11 @@ COMPLEXITY
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">03</span>
-          <span><strong>Exports are conservative by default.</strong> Public API exposed by direct export directives is treated as reachable.</span>
+          <span><strong>Exports are conservative by default.</strong> Directly importable libraries, parts, and every conditional branch are treated as reachable.</span>
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">04</span>
-          <span><strong>CI gating is yours to define.</strong> Findings are report data; choose which JSON counts should fail your build.</span>
+          <span><strong>CI gating is opt-in.</strong> Use baselines for existing debt and <code>--fail-on</code> for selected finding categories.</span>
         </li>
       </ul>
     </div>

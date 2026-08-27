@@ -10,7 +10,7 @@ Hyena is a Dart package and CLI for two related checks:
 - **Dead code:** resolve declarations and references, build a reachability graph, and report declarations that have no path from a root.
 - **Complexity:** parse functions, methods, constructors, and closures and calculate control-flow and size metrics.
 
-It recursively analyzes Dart files under the target path and can write console, JSON, Markdown, or standalone HTML output.
+It analyzes a Dart file or recursively scans a directory and can write console, JSON, Markdown, standalone HTML, or SARIF 2.1 output.
 
 ## Choose a path
 
@@ -44,7 +44,7 @@ hyena:
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs follow the current `main` branch of the source repository (package version 1.0.1 when this site was written). The currently published pub.dev release may lag behind the repository.
+These docs cover Hyena Dart 1.1.0 and follow the current `main` branch of the source repository. The currently published pub.dev release may briefly lag behind the repository.
 :::
 
 ## Source and package

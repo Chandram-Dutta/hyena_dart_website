@@ -9,7 +9,7 @@ The package executable is `hyena_dart`. Source checkouts can use `dart run bin/h
 hyena_dart <command> [options] [path]
 ```
 
-The first positional value is the target path. It defaults to `.`. Additional positional values are not used.
+The first positional value is a Dart file or directory target. It defaults to `.`. Additional positional values are not used.
 
 ## Common options
 
@@ -17,10 +17,13 @@ Every analysis command supports these options:
 
 | Option | Short | Value | Default | Behavior |
 | --- | --- | --- | --- | --- |
-| `--format` | `-f` | `console`, `json`, `markdown`, `html` | `console` | Select the reporter. |
+| `--format` | `-f` | `console`, `json`, `markdown`, `html`, `sarif` | `console` | Select the reporter. |
 | `--output` | `-o` | file path | — | Write the generated report to a file instead of stdout. |
 | `--config` | `-c` | file path | auto-discovered | Load exactly this configuration file. A missing file is an error. |
 | `--no-color` | — | flag | off | Disable ANSI colors in console output. Has no effect on other formats. |
+| `--baseline` | — | file path | — | Suppress findings recorded in a versioned Hyena baseline. |
+| `--write-baseline` | — | file path | — | Write the current findings to a baseline file. |
+| `--fail-on` | — | `dead-code`, `complexity` | none | Return exit code 1 when an unsuppressed finding in a selected category remains. Repeat the option or separate categories with commas. |
 | `--help` | `-h` | flag | — | Print command usage. |
 
 When `--output` is set, Hyena writes the file and prints `Report written to: <path>`.
@@ -99,8 +102,36 @@ hyena_dart complexity lib -f html -o complexity.html
 
 A non-integer or negative threshold is a usage error.
 
+## Baselines and source suppressions
+
+Create and commit a baseline when existing findings are accepted temporarily:
+
+```shell
+hyena_dart analyze . --write-baseline=hyena-baseline.json
+hyena_dart analyze . \
+  --baseline=hyena-baseline.json \
+  --fail-on=dead-code,complexity
+```
+
+`--baseline` and `--write-baseline` cannot be used together. Baselines use package-relative, line-independent fingerprints, so moving an unchanged declaration does not invalidate its entry. Rename or move a symbol to another file and it is treated as a new finding.
+
+For an intentional exception in source, place a rule comment immediately before the declaration:
+
+```dart
+// hyena:ignore dead-code
+void registeredByName() {}
+
+// hyena:ignore complexity
+void generatedDispatcher() {}
+
+// hyena:ignore cyclomatic-complexity,max-nesting
+void stateMachine() {}
+```
+
+The supported rules are `dead-code`, `complexity`, `cyclomatic-complexity`, `max-nesting`, and `max-parameters`. A suppressed dead-code declaration remains a reachability root, preventing cascading findings for its dependencies.
+
 ## Exit behavior
 
-Hyena completes normally after producing a report, even when it contains unused declarations or threshold violations. Invalid arguments, missing targets or config files, parse failures, and dead-code resolution failures are errors.
+Hyena returns exit code 0 after reporting findings by default. Pass `--fail-on=dead-code`, `--fail-on=complexity`, or `--fail-on=dead-code,complexity` to return exit code 1 when a selected, unsuppressed finding remains. This applies after baseline filtering.
 
-If a build should fail on findings, consume the JSON report and apply an explicit project policy. See [CI and automation](/docs/ci/).
+Invalid arguments, missing targets or config files, parse failures, and dead-code resolution failures remain operational errors. See [CI and automation](/docs/ci/) for complete examples.

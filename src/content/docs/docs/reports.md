@@ -1,6 +1,6 @@
 ---
 title: Report formats
-description: Choose console, JSON, Markdown, or standalone HTML output and understand each report's shape.
+description: Choose console, JSON, Markdown, HTML, or SARIF output and understand each report's shape.
 ---
 
 All commands build an `AnalysisResult` and pass it to one reporter. Select a format with `--format` and write it with `--output`.
@@ -10,6 +10,8 @@ hyena_dart analyze lib --format=json --output=hyena-report.json
 ```
 
 Without `--output`, the generated content is printed to stdout.
+
+When `--baseline` is present, baseline-matched findings are removed before any reporter runs. Every format therefore shows only current, unsuppressed findings.
 
 ## Console
 
@@ -115,6 +117,16 @@ hyena_dart analyze lib -f html -o report.html
 ```
 
 The HTML reporter lists all findings it receives. Keep reports private when source paths or declaration names are sensitive.
+
+## SARIF
+
+SARIF 2.1 is intended for code-scanning systems and editor integrations. Hyena emits rules for dead code and each complexity threshold, physical source locations, finding properties, and stable partial fingerprints.
+
+```shell
+hyena_dart analyze . --format=sarif --output=hyena.sarif
+```
+
+The output is one SARIF run whose driver is `hyena_dart`. Paths are package-relative when the target belongs to a Dart package. Use `--baseline` to omit accepted findings before uploading the file.
 
 ## Programmatic reporters
 

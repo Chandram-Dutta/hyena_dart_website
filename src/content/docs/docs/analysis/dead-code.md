@@ -7,7 +7,7 @@ The dead-code analyzer resolves Dart syntax to analyzer elements, records declar
 
 ## Analysis flow
 
-1. Recursively collect `*.dart` files under the target.
+1. Collect the target Dart file, or recursively collect `*.dart` files under a target directory.
 2. Apply custom and built-in exclusions.
 3. Resolve every included compilation unit with the official Dart analyzer.
 4. Record declarations and their stable analyzer element IDs.
@@ -23,28 +23,31 @@ If any included file cannot be resolved or contains an analyzer error, the analy
 | Category | Details |
 | --- | --- |
 | Types | Classes, abstract classes, mixins, named extensions, extension types, enums |
-| Executables | Top-level functions, methods, getters, setters |
+| Executables | Top-level functions, methods, getters, setters, explicit constructors |
 | Data | Top-level variables, fields, enum values |
 | Aliases | Function type aliases and generic type aliases |
 
-Constructors are used in reference tracking but are not emitted as standalone dead-code findings. Anonymous extensions do not have their own declaration entry. Methods annotated `@override` are not candidates because external framework or interface dispatch can call them.
+Explicit unnamed, named, and private constructors can be emitted as standalone findings. An unnamed constructor is displayed as `Class.new`. Anonymous extensions do not have their own declaration entry.
 
 ## Reachability roots
 
 References outside a recorded declaration are roots. Hyena also roots:
 
 - the top-level `main` function;
-- methods annotated `@override`;
-- exported declarations when `ignore_exports` is enabled;
+- members that implement an inherited interface member, whether or not they have an `@override` annotation;
+- public declarations in directly importable package libraries, library parts, and explicit exports when `ignore_exports` is enabled;
+- declarations exposed by any branch of a conditional import or export;
 - private declarations when `ignore_private` is enabled.
 
 References inside a root or another reachable declaration make their target declarations reachable. This avoids treating a helper as used merely because another unreachable helper calls it.
 
-When an analyzer element is unavailable, Hyena falls back to matching simple and qualified names. Element-based references are the primary path.
+When an analyzer element is unavailable, Hyena falls back conservatively to matching simple and qualified names. Unresolved dynamic member access retains same-named member declarations because the runtime target cannot be proven statically. Element-based references remain the primary path.
 
 ## Export handling
 
-With the default `ignore_exports: true`, Hyena identifies public top-level declarations exposed by direct `export` directives among the scanned units. It honors `show` and `hide` combinators.
+With the default `ignore_exports: true`, Hyena treats public declarations in directly importable package libraries as API roots. A file under `lib/` is directly importable unless its package-relative path begins with `src/`. Declarations in a library's `part` files inherit that library's visibility.
+
+Hyena also identifies public top-level declarations exposed by explicit `export` directives among the scanned units. It honors `show` and `hide` combinators and follows every conditional export branch conservatively.
 
 An exported container also protects its public members and public constructors as roots. Private members remain candidates unless `ignore_private` is also enabled.
 
@@ -54,8 +57,8 @@ export 'src/client.dart' show Client;
 
 `Client` and its public surface are treated conservatively as externally reachable.
 
-:::caution[Current export boundary]
-Export discovery is direct rather than a transitive public-API closure. It resolves relative and `package:` URIs using `.dart_tool/package_config.json`, and only recognizes exported files included in the current scan.
+:::caution[Scan boundary]
+Export and part discovery resolves relative and `package:` URIs using `.dart_tool/package_config.json`. Hyena can protect only declarations whose source files are included in the current scan.
 :::
 
 Use `--no-ignore-exports` to include exported declarations as candidates:
@@ -74,6 +77,19 @@ hyena_dart dead-code lib --ignore-private
 
 `ignore_main` defaults to `true` and is only configurable in YAML. It omits `main` from the declaration count and candidate set. `main` remains a graph root either way.
 
+## Suppress an intentional finding
+
+Place a suppression immediately before a declaration reached through reflection, generated registration, or another mechanism Hyena cannot resolve:
+
+```dart
+// hyena:ignore dead-code
+void registeredByName() {
+  initializePlugin();
+}
+```
+
+The declaration remains a graph root. Its reachable dependencies, such as `initializePlugin` above, therefore do not become cascading dead-code findings.
+
 ## Interpreting findings
 
 Treat a finding as a static reachability claim within the scanned and resolved source, not proof that deletion is always safe. Review code reached through:
@@ -81,7 +97,6 @@ Treat a finding as a static reachability claim within the scanned and resolved s
 - reflection or string-based registration;
 - generated source that Hyena excludes;
 - native bindings, build scripts, or framework conventions;
-- consumers outside the scanned package;
-- indirect export chains not represented in the scan.
+- consumers outside the scanned package or selected target.
 
 Prefer a narrow exclusion or an export/private policy change only when the indirect entry mechanism is intentional and understood.

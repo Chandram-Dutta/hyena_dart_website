@@ -112,3 +112,26 @@ hyena_dart complexity lib --threshold=15
 ```
 
 See [configuration](/docs/configuration/) for the complete schema.
+
+## Suppress an intentional violation
+
+Place `// hyena:ignore complexity` immediately before an executable to suppress all three threshold rules for it:
+
+```dart
+// hyena:ignore complexity
+void generatedDispatcher() {
+  // Framework-required control flow.
+}
+```
+
+Use a specific rule when only one metric is intentionally above its threshold:
+
+```dart
+// hyena:ignore cyclomatic-complexity,max-nesting
+void stateMachine() {}
+
+// hyena:ignore max-parameters
+void frameworkCallback(int a, int b, int c, int d, int e, int f, int g) {}
+```
+
+Rule-specific suppressions do not hide other complexity violations on the same executable.
