@@ -2,12 +2,28 @@
 import FileX from '@lucide/astro/icons/file-x';
 import Gauge from '@lucide/astro/icons/gauge';
 import Network from '@lucide/astro/icons/network';
+import ShieldCheck from '@lucide/astro/icons/shield-check';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import logo from '../assets/hyena-logo.webp';
 
 const title = 'Hyena Dart — dead-code and complexity analysis';
 const description =
-  'Find unused declarations and measure complexity in Dart and Flutter projects with a configurable AST-based CLI.';
+  'Find unused declarations and measure complexity in Dart and Flutter projects through a configurable CLI or bounded read-only MCP tool.';
+const mcpConfig = `{
+  "mcpServers": {
+    "hyena": {
+      "command": "hyena_mcp",
+      "args": [
+        "--root",
+        "/absolute/project"
+      ]
+    }
+  }
+}`;
+const mcpCall = `hyena_analyze({
+  "path": "lib",
+  "checks": "both"
+})`;
 ---
 
 <BaseLayout {title} {description}>
@@ -29,7 +45,7 @@ const description =
             Read the docs
           </a>
         </div>
-        <p class="version-note">v1.1.0 · Dart SDK 3.10+ · MIT licensed · local-first</p>
+        <p class="version-note">v1.1.1 · Dart SDK 3.10+ · MIT licensed · local-first</p>
       </div>
 
       <figure class="terminal-wrap" aria-label="Example Hyena report">
@@ -76,6 +92,59 @@ COMPLEXITY
     </div>
   </section>
 
+  <section class="home-section" id="safe-ai-mcp">
+    <div class="section-shell">
+      <div class="mcp-panel">
+        <div class="mcp-copy">
+          <div class="mcp-title-row">
+            <span class="mcp-icon" aria-hidden="true">
+              <ShieldCheck size={24} stroke-width={1.8} />
+            </span>
+            <div>
+              <p class="section-kicker">Safe AI / MCP</p>
+              <p class="mcp-status">Current main · unreleased after v1.1.1</p>
+            </div>
+          </div>
+          <h2>One bounded tool for AI-assisted review.</h2>
+          <p class="mcp-lede">
+            Start <code>hyena_mcp</code> with one absolute project root. An MCP
+            client receives exactly one read-only tool for relative Dart paths
+            and selected checks.
+          </p>
+          <ul class="mcp-facts" aria-label="MCP integration properties">
+            <li>
+              <strong>One analysis surface.</strong>
+              <span><code>hyena_analyze(path, checks)</code> returns schema-versioned findings.</span>
+            </li>
+            <li>
+              <strong>No execution path.</strong>
+              <span>No HTTP server, shell, target execution, writes, fixes, or outbound network code.</span>
+            </li>
+            <li>
+              <strong>Bounded, not sandboxed.</strong>
+              <span>Path checks and hard limits apply; untrusted workspaces still need OS isolation.</span>
+            </li>
+          </ul>
+          <a class="button button-primary" href="/docs/safe-ai-mcp/">
+            Configure Safe AI / MCP <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <figure class="mcp-config">
+          <figcaption>
+            <span>mcp.json</span>
+            <span>stdio</span>
+          </figcaption>
+          <pre><code>{mcpConfig}</code></pre>
+          <div class="mcp-request">
+            <span>tool call</span>
+            <code>{mcpCall}</code>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section class="home-section">
     <div class="section-shell">
       <div class="section-heading">
@@ -104,8 +173,8 @@ COMPLEXITY
         </article>
         <article class="workflow-step">
           <span class="step-number">03 / Analyze</span>
-          <h3>Point Hyena at a path</h3>
-          <p>Run both analyzers and print the default console report.</p>
+          <h3>Choose a file or directory</h3>
+          <p>Analyze the package, a subdirectory, or one Dart file while iterating.</p>
           <code>hyena_dart analyze .</code>
         </article>
       </div>
@@ -135,11 +204,12 @@ COMPLEXITY
             <h3>Reachability-based dead code</h3>
             <p>
               Reports declarations that cannot be reached from entry points,
-              overrides, top-level references, and configured export roots.
+              inherited implementations, top-level references, and public API roots.
             </p>
             <ul class="tag-list" aria-label="Supported dead-code entities">
               <li>classes</li><li>mixins</li><li>extensions</li>
-              <li>enums</li><li>methods</li><li>fields</li><li>typedefs</li>
+              <li>enums</li><li>constructors</li><li>methods</li>
+              <li>fields</li><li>typedefs</li>
             </ul>
           </div>
         </article>
@@ -176,6 +246,47 @@ COMPLEXITY
           </div>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Adoption controls</p>
+          <h2>Keep exceptions explicit. Gate only what is new.</h2>
+        </div>
+        <p>
+          Source suppressions and a versioned baseline are applied before
+          reporting and exit-code policy, so existing debt does not need a
+          broad exclusion.
+        </p>
+      </div>
+      <div class="workflow-grid">
+        <article class="workflow-step">
+          <span class="step-number">01 / Source</span>
+          <h3>Suppress one declaration</h3>
+          <p>Keep an intentional exception next to the code and scope it to a declaration or rule.</p>
+          <code>// hyena:ignore dead-code</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">02 / Baseline</span>
+          <h3>Record accepted findings</h3>
+          <p>Commit stable, line-independent fingerprints for findings the project accepts today.</p>
+          <code>--write-baseline=hyena-baseline.json</code>
+        </article>
+        <article class="workflow-step">
+          <span class="step-number">03 / CI</span>
+          <h3>Fail on new findings</h3>
+          <p>Apply the baseline, then return exit code 1 only for the selected finding categories.</p>
+          <code>--fail-on=dead-code,complexity</code>
+        </article>
+      </div>
+      <p class="section-followup">
+        <a class="plain-link" href="/docs/ci/">
+          See baseline and CI examples <span aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   </section>
 
@@ -241,7 +352,7 @@ COMPLEXITY
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">04</span>
-          <span><strong>CI gating is opt-in.</strong> Use baselines for existing debt and <code>--fail-on</code> for selected finding categories.</span>
+          <span><strong>Dynamic dispatch stays conservative.</strong> Unresolved dynamic calls retain same-named members when the runtime target cannot be proven.</span>
         </li>
       </ul>
     </div>

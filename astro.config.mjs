@@ -65,6 +65,7 @@ export default defineConfig({
             { slug: 'docs/configuration' },
             { slug: 'docs/reports' },
             { slug: 'docs/ci' },
+            { slug: 'docs/safe-ai-mcp' },
           ],
         },
         {

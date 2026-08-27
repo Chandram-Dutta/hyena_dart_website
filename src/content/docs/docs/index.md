@@ -23,6 +23,7 @@ It analyzes a Dart file or recursively scans a directory and can write console, 
 | Understand a finding | [Dead-code analysis](/docs/analysis/dead-code/) or [complexity analysis](/docs/analysis/complexity/) |
 | Consume or publish a report | [Report formats](/docs/reports/) |
 | Use results in automation | [CI and automation](/docs/ci/) |
+| Connect an AI client | [Safe AI and MCP](/docs/safe-ai-mcp/) |
 | Call the analyzers from Dart | [Library API](/docs/library-api/) |
 | Contribute to Hyena | [Architecture and development](/docs/architecture/) |
 
@@ -44,7 +45,7 @@ hyena:
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs cover Hyena Dart 1.1.0 and follow the current `main` branch of the source repository. The currently published pub.dev release may briefly lag behind the repository.
+These docs cover Hyena Dart 1.1.1. Pages explicitly marked **Unreleased**, including Safe AI / MCP, document current source changes intended for a later package release.
 :::
 
 ## Source and package
