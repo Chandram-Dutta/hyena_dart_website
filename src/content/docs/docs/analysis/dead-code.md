@@ -10,7 +10,7 @@ The dead-code analyzer resolves Dart syntax to analyzer elements, records declar
 1. Collect the target Dart file, or recursively collect `*.dart` files under a target directory.
 2. Apply custom and built-in exclusions.
 3. Resolve every included compilation unit with the official Dart analyzer.
-4. Record declarations and their stable analyzer element IDs.
+4. Record declarations with source-and-offset identities for their resolved analyzer elements.
 5. Record references as edges from the declaration that contains each reference.
 6. Establish roots such as `main`, overrides, top-level references, and configured exports.
 7. Traverse the graph from all roots.
@@ -40,6 +40,8 @@ References outside a recorded declaration are roots. Hyena also roots:
 - private declarations when `ignore_private` is enabled.
 
 References inside a root or another reachable declaration make their target declarations reachable. This avoids treating a helper as used merely because another unreachable helper calls it.
+
+For a Dart workspace, Hyena Dart 1.2.1 and later join these resolved edges across package boundaries before traversal. A reachable app declaration can keep the exact shared-package declaration it calls, while a same-named declaration in another package remains distinct. Calls made only from unreachable declarations still do not keep their targets alive. See [Cross-package dead-code reachability](/docs/workspaces/#cross-package-dead-code-reachability).
 
 When an analyzer element is unavailable, Hyena falls back conservatively to matching simple and qualified names. Unresolved dynamic member access retains same-named member declarations because the runtime target cannot be proven statically. Element-based references remain the primary path.
 

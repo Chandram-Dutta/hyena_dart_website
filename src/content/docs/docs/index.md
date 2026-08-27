@@ -49,8 +49,15 @@ hyena:
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs cover Hyena Dart 1.2.0, the current published release.
+These docs cover Hyena Dart 1.2.1, the current published release.
 :::
+
+## Fixed in v1.2.1
+
+Hyena Dart 1.2.1:
+
+- [joins dead-code reachability across workspace package boundaries](/docs/workspaces/#cross-package-dead-code-reachability), preserving the exact resolved declaration while ignoring references that occur only inside unreachable callers; and
+- accepts [native Windows separators in explicit and glob workspace entries](/docs/workspaces/#declare-the-workspace).
 
 ## Available in v1.2.0
 
@@ -64,5 +71,6 @@ Hyena Dart 1.2.0 adds:
 
 - [Source repository](https://github.com/Chandram-Dutta/hyena_dart)
 - [Package on pub.dev](https://pub.dev/packages/hyena_dart)
+- [v1.2.1 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.1)
 - [v1.2.0 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.0)
 - [Issue tracker](https://github.com/Chandram-Dutta/hyena_dart/issues)

@@ -37,6 +37,18 @@ environment:
 
 Hyena supports explicit entries, nested workspace declarations, and glob entries. The accepted workspace syntax is ultimately determined by the installed Dart SDK, so use syntax that `dart pub get` accepts for the target project.
 
+:::note[Native Windows paths in v1.2.1]
+Hyena Dart 1.2.1 and later accept native separators in both explicit and glob entries. On Windows, plain YAML values can therefore use backslashes:
+
+```yaml title="pubspec.yaml (Windows)"
+workspace:
+  - apps\mobile
+  - packages\*
+```
+
+Forward-slash entries continue to work. The same validation, root boundary, and `resolution: workspace` requirements apply after either form is expanded.
+:::
+
 A discovered member can declare another workspace to add nested members:
 
 ```yaml title="packages/platform/pubspec.yaml"
@@ -72,6 +84,18 @@ Workspace discovery rejects ambiguous or unsafe membership, including:
 - a non-root member without `resolution: workspace`.
 
 Fix the workspace declaration rather than excluding an invalid member from Hyena. The same package graph should be valid for both Dart and the analyzer.
+
+## Cross-package dead-code reachability
+
+:::note[Correctly joined in v1.2.1]
+Hyena Dart 1.2.1 and later join resolved dead-code edges across workspace package boundaries before traversing the graph.
+:::
+
+A root in an app package can therefore keep the exact declaration it reaches in a shared package, along with that declaration's reachable dependencies. Package-scoped reports are preserved: a live shared declaration remains in its package's result rather than moving into the caller's result.
+
+Matching uses resolved declaration identity, not just a name. If two packages both declare `SessionStore`, a reference to one does not keep the other alive. References made only from an unreachable caller also do not make their targets reachable, including when caller and target are in different packages.
+
+This joined graph applies to dead-code analysis. Complexity remains calculated and reported independently for each package.
 
 ## Configuration per package
 

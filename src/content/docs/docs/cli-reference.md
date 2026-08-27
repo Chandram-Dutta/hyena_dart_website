@@ -27,8 +27,8 @@ hyena_mcp --version
 The output is one line with the executable name followed by the package version:
 
 ```text
-hyena_dart 1.2.0
-hyena_mcp 1.2.0
+hyena_dart 1.2.1
+hyena_mcp 1.2.1
 ```
 
 `hyena_mcp --version` does not require `--root`. This makes it safe to identify the executable that an MCP client will launch before granting access to a project.

@@ -71,4 +71,4 @@ hyena_dart --version
 hyena_mcp --version
 ```
 
-You should see the `analyze`, `dead-code`, and `complexity` commands. With Hyena Dart 1.2.0, the version commands print `hyena_dart 1.2.0` and `hyena_mcp 1.2.0` respectively.
+You should see the `analyze`, `dead-code`, and `complexity` commands. With the current Hyena Dart 1.2.1 release, the version commands print `hyena_dart 1.2.1` and `hyena_mcp 1.2.1` respectively.
