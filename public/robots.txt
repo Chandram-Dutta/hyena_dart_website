@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://hyenadart.onlychan.xyz/sitemap-index.xml

@@ -12,6 +12,7 @@ interface Props {
 const { title, description } = Astro.props;
 const sourceRepository = 'https://github.com/Chandram-Dutta/hyena_dart';
 const packageUrl = 'https://pub.dev/packages/hyena_dart';
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
 
 <!doctype html>
@@ -21,6 +22,10 @@ const packageUrl = 'https://pub.dev/packages/hyena_dart';
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta name="theme-color" content="#f4f1e8" />
     <script is:inline>
       const storedTheme = localStorage.getItem('starlight-theme');
@@ -35,6 +40,8 @@ const packageUrl = 'https://pub.dev/packages/hyena_dart';
         initialTheme === 'dark' ? '#071a29' : '#f4f1e8';
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
   </head>
   <body>

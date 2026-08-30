@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 const sourceRepository = 'https://github.com/Chandram-Dutta/hyena_dart';
 
 export default defineConfig({
+  site: 'https://hyenadart.onlychan.xyz',
   output: 'static',
   vite: {
     preview: {
