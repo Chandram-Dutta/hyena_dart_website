@@ -11,8 +11,12 @@ interface Props {
 
 const { title, description } = Astro.props;
 const sourceRepository = 'https://github.com/Chandram-Dutta/hyena_dart';
+const websiteRepository = 'https://github.com/Chandram-Dutta/hyena_dart_website';
 const packageUrl = 'https://pub.dev/packages/hyena_dart';
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+const socialCardUrl = new URL('/hyena-dart-social-card.png', Astro.site ?? Astro.url);
+const socialCardAlt =
+  'Hyena Dart — find dead code and measure complexity in Dart and Flutter projects.';
 ---
 
 <!doctype html>
@@ -26,6 +30,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Hyena Dart" />
+    <meta property="og:image" content={socialCardUrl} />
+    <meta property="og:image:secure_url" content={socialCardUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={socialCardAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialCardUrl} />
+    <meta name="twitter:image:alt" content={socialCardAlt} />
     <meta name="theme-color" content="#f4f1e8" />
     <script is:inline>
       const storedTheme = localStorage.getItem('starlight-theme');
@@ -120,6 +136,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
           <a href={sourceRepository}>Source</a>
           <a href={`${sourceRepository}/issues`}>Issues</a>
           <a href={packageUrl}>Package</a>
+          <a href={`${websiteRepository}/blob/main/LICENSE`}>License</a>
         </nav>
       </div>
     </footer>

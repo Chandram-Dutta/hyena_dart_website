@@ -47,7 +47,7 @@ hyena:
     entry_point_annotations: []
 ```
 
-Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
+Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `.dart_tool`, `build`, or `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
 These docs cover Hyena Dart v2.0.0, the current published release.

@@ -6,41 +6,42 @@ description: Understand Hyena's package boundaries, analyzer passes, tests, and 
 Hyena keeps command parsing, analysis, data, configuration, and rendering in separate modules under `lib/src/`.
 
 ```text
-bin/hyena_dart.dart
-        │
-        ▼
-HyenaCommandRunner ───────────────┐
-        │                         │
-        ▼                         ▼
- AnalyzerConfig            Reporter selection
-        │                         │
-        ├──────────────┐          │
-        ▼              ▼          │
-DeadCodeAnalyzer  ComplexityAnalyzer
-        │              │
-        ▼              ▼
- AST declaration, reference, and complexity visitors
-        │              │
-        └──────┬───────┘
-               ▼
-      report and metric models
-               │
-               ▼
- console / JSON / Markdown / HTML
+bin/hyena_dart.dart ──▶ HyenaCommandRunner ──▶ AnalysisRunner
+                                                   │
+                              ┌────────────────────┴───────────────────┐
+                              ▼                                        ▼
+                    package/workspace discovery                 AnalyzerConfig
+                              │                                        │
+                              └────────────────────┬───────────────────┘
+                                                   │
+                              ┌────────────────────┴───────────────────┐
+                              ▼                                        ▼
+                     DeadCodeAnalyzer                         ComplexityAnalyzer
+                              │                                        │
+                              └────────────────────┬───────────────────┘
+                                                   ▼
+                                      report and metric models
+                                                   │
+                                                   ▼
+                              console / JSON / Markdown / HTML / SARIF
+
+bin/hyena_mcp.dart ──▶ HyenaMcpServer ──▶ bounded MCP analysis service
 ```
 
 ## Package layout
 
 | Path | Responsibility |
 | --- | --- |
-| `bin/hyena_dart.dart` | Executable entry point. |
+| `bin/hyena_dart.dart` | Analysis CLI entry point. |
+| `bin/hyena_mcp.dart` | Bounded stdio MCP server entry point. |
 | `lib/hyena_dart.dart` | Public exports for package consumers. |
 | `lib/src/cli/` | Commands, flags, config loading, analyzer orchestration, and output destinations. |
 | `lib/src/config/` | Defaults, YAML discovery and parsing, validation, and immutable copies. |
-| `lib/src/analyzer/` | File collection, exclusion, analyzer sessions, and report construction. |
+| `lib/src/analyzer/` | Package/workspace orchestration, file collection, exclusion, analyzer sessions, and report construction. |
 | `lib/src/analyzer/ast_visitors/` | Declaration, reference, control-flow, nesting, LOC, and token metric collection. |
 | `lib/src/models/` | Analysis results, code entities, dead-code reports, and complexity metrics. |
-| `lib/src/reporters/` | Pure report-to-string rendering. |
+| `lib/src/reporters/` | Console, JSON, Markdown, HTML, and SARIF report-to-string rendering. |
+| `lib/src/mcp/` | Bounded MCP tool registration, target validation, isolation, and structured responses. |
 | `test/` | Unit and analyzer behavior tests. |
 
 Analyzers return models and do not print. The CLI owns terminal and file output. This makes the same analysis usable through both the executable and the library API.

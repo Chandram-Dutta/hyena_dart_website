@@ -1,0 +1,4 @@
+Contact: mailto:chandramdutta2004@gmail.com
+Expires: 2027-08-30T23:59:59Z
+Preferred-Languages: en
+Canonical: https://hyenadart.onlychan.xyz/.well-known/security.txt

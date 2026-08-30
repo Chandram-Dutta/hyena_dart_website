@@ -192,8 +192,8 @@ summary {
 
 .theme-toggle {
   display: grid;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 2.75rem;
+  height: 2.75rem;
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid var(--line);
@@ -227,7 +227,8 @@ summary {
 }
 
 .mobile-menu summary {
-  padding: 0.5rem 0.7rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.8rem;
   border: 1px solid var(--line);
   background: var(--paper-bright);
   cursor: pointer;
@@ -991,6 +992,9 @@ p {
 }
 
 .footer-inner nav a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   color: var(--ink-soft);
   text-underline-offset: 0.2rem;
 }

@@ -162,6 +162,8 @@ Custom patterns are checked first. Hyena then always excludes:
 - file names ending in `.g.dart`;
 - file names ending in `.freezed.dart`;
 - file names ending in `.mocks.dart`;
+- any path with a segment exactly named `.dart_tool`;
+- any path with a segment exactly named `build`;
 - any path with a segment exactly named `generated`.
 
 :::caution

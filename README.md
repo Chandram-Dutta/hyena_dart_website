@@ -74,6 +74,9 @@ Assets; it does not need the Cloudflare Astro adapter or runtime Worker code.
 for that custom domain. The hostname must not already have a CNAME record; if
 one exists, remove it before the first production deployment.
 
+`public/_headers` adds browser security headers to every static response and a
+long-lived immutable cache policy to fingerprinted Astro assets.
+
 Pushes to `main` deploy to production. When non-production branch builds are
 enabled in Cloudflare, Wrangler uploads preview versions without changing the
 production route.
@@ -85,3 +88,8 @@ bun install --frozen-lockfile
 bun run build
 bun run deploy
 ```
+
+## License
+
+This website and its documentation source are available under the
+[MIT License](LICENSE).

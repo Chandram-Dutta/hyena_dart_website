@@ -49,7 +49,7 @@ const mcpCall = `hyena_analyze({
           </a>
         </div>
         <p class="version-note">
-          <a href="/docs/migrating-to-v2/">v2.0.0</a> · current release · Dart SDK 3.10+
+          <a href="/docs/migrating-to-v2/">v2.0.0</a> · current release · Dart SDK 3.10.3+
         </p>
       </div>
 
@@ -242,11 +242,12 @@ COMPLEXITY
             <h3>Predictable exclusions</h3>
             <p>
               Custom glob patterns apply on top of built-in exclusions for
-              common generated Dart outputs and <code>generated</code> directories.
+              generated outputs and build directories.
             </p>
             <ul class="tag-list" aria-label="Built-in excluded files">
               <li>*.g.dart</li><li>*.freezed.dart</li>
               <li>*.mocks.dart</li><li>generated/</li>
+              <li>.dart_tool/</li><li>build/</li>
             </ul>
           </div>
         </article>

@@ -3,7 +3,7 @@ title: Installation
 description: Add Hyena to a Dart or Flutter project and run the project-pinned command.
 ---
 
-Hyena requires **Dart SDK 3.10 or newer**. Flutter projects can use the Dart SDK bundled with Flutter.
+Hyena requires **Dart SDK 3.10.3 or newer (below 4.0.0)**. Flutter projects can use the Dart SDK bundled with Flutter.
 
 :::note[Available in v2.0.0]
 Project-local installation and execution is the supported workflow in the current v2.0.0 release.

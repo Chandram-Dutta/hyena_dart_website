@@ -109,6 +109,7 @@ final reporters = <Reporter>[
   JsonReporter(prettyPrint: true),
   MarkdownReporter(),
   HtmlReporter(),
+  SarifReporter(),
 ];
 
 for (final reporter in reporters) {
