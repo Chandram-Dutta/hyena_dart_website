@@ -65,7 +65,7 @@ Resolve the complete workspace before analysis:
 
 ```shell
 dart pub get
-hyena_dart analyze .
+dart run hyena_dart analyze .
 ```
 
 Point the command at the directory that owns the root `workspace:` declaration. A package directory without that root declaration is analyzed as a single package.
@@ -111,7 +111,7 @@ A member can therefore override the root policy with its own configuration, whil
 An explicit configuration is intentionally different:
 
 ```shell
-hyena_dart analyze . --config=tool/hyena-strict.yaml
+dart run hyena_dart analyze . --config=tool/hyena-strict.yaml
 ```
 
 The selected file applies to **every** package in the workspace. It may be outside the workspace root because the user, rather than automatic discovery, supplied the path. Review that file before using it; there is no per-member fallback when `--config` is explicit.
@@ -124,16 +124,16 @@ The presentation preserves package boundaries:
 
 | Format | Workspace behavior |
 | --- | --- |
-| Console | Prints a separate analysis section for each package. |
-| JSON | Adds `workspace.packageCount` and a `packages` array of package results. |
-| Markdown | Groups summaries and findings by package. |
-| HTML | Renders package-scoped report sections in the standalone document. |
+| Console | Prints a separate analysis section for each package with workspace-relative target and finding paths. |
+| JSON | Adds `workspace.packageCount` and a `packages` array; every `targetPath` and `filePath` is workspace-relative. |
+| Markdown | Groups summaries and workspace-relative findings by package. |
+| HTML | Renders package-scoped sections with workspace-relative paths. |
 | SARIF | Keeps source locations relative to the common workspace root. |
 
 Baseline fingerprints also use workspace-relative paths, so matching remains stable across package sections without leaking absolute member locations.
 
 ## MCP workspace results
 
-With workspace support in v1.2.0, `hyena_mcp --root <workspace-root>` accepts a relative target such as `.` and aggregates every workspace package. Returned finding paths remain relative to the configured workspace root.
+With workspace support in v1.2.0, running `dart run hyena_dart:hyena_mcp --root .` from the workspace root accepts a relative target such as `.` and aggregates every workspace package. Returned finding paths remain relative to that configured workspace root.
 
 The MCP server's existing file, byte, finding, time, and concurrency limits still apply to the complete request. Workspace support does not broaden the configured root or create a second tool. See [Safe AI and MCP](/docs/safe-ai-mcp/) for the read-only contract and trust boundary.

@@ -1,48 +1,50 @@
 ---
 title: Installation
-description: Install Hyena as a global CLI, project development dependency, or source checkout.
+description: Add Hyena to a Dart or Flutter project and run the project-pinned command.
 ---
 
 Hyena requires **Dart SDK 3.10 or newer**. Flutter projects can use the Dart SDK bundled with Flutter.
 
-## Global CLI
-
-Use global activation when you want one `hyena_dart` executable available across projects.
-
-```shell
-dart pub global activate hyena_dart
-hyena_dart analyze .
-```
-
-If your shell cannot find `hyena_dart`, add Dart's global executable directory to `PATH`. `dart pub global list` confirms whether activation succeeded.
-
-:::note
-The command runner's help banner says `Usage: hyena ...`, but the executable installed by the package is named `hyena_dart`.
+:::note[Available in v2.0.0]
+Project-local installation and execution is the supported workflow in the current v2.0.0 release.
 :::
 
-## Project development dependency
+## Add the development dependency
 
-Pin Hyena with the project when the analysis version should be reproducible across a team or CI.
+For a Dart project:
 
 ```shell
-dart pub add --dev hyena_dart
+dart pub add dev:hyena_dart
+```
+
+For a Flutter project:
+
+```shell
+flutter pub add dev:hyena_dart
+```
+
+Both commands update the project's `pubspec.yaml` and resolve Hyena into that project's package configuration. Commit the resulting dependency files according to the normal rules for the project.
+
+Hyena v2 supports only project-local execution. Run it from the project that declares the dependency:
+
+```shell
 dart run hyena_dart analyze .
 ```
 
-This updates `pubspec.yaml` and resolves the package. Commit the resulting dependency files according to the normal rules for your Dart or Flutter project.
+This resolves the Hyena version selected by the project's lockfile. It keeps local development and CI on the same analyzer version and avoids a separate global command mapping.
 
 ## Source checkout
 
-Use a checkout when contributing or testing changes not yet published.
+Use a checkout when contributing to Hyena itself:
 
 ```shell
 git clone https://github.com/Chandram-Dutta/hyena_dart.git
 cd hyena_dart
 dart pub get
-dart run bin/hyena_dart.dart analyze /path/to/project
+dart run bin/hyena_dart.dart analyze .
 ```
 
-For a path dependency in another project's `pubspec.yaml`:
+To test that checkout from another project, declare it as a project-local path dependency:
 
 ```yaml title="pubspec.yaml"
 dev_dependencies:
@@ -50,7 +52,7 @@ dev_dependencies:
     path: ../hyena_dart
 ```
 
-Then invoke it with `dart run hyena_dart ...` from that project.
+Then run `dart pub get` and invoke `dart run hyena_dart ...` from the consuming project.
 
 ## Prepare the target
 
@@ -65,10 +67,12 @@ Dead-code analysis asks the official Dart analyzer to resolve every included Dar
 ## Confirm the installation
 
 ```shell
-hyena_dart --help
-hyena_dart complexity --help
-hyena_dart --version
-hyena_mcp --version
+dart run hyena_dart --help
+dart run hyena_dart complexity --help
+dart run hyena_dart --version
+dart run hyena_dart:hyena_mcp --version
 ```
 
-You should see the `analyze`, `dead-code`, and `complexity` commands. With the current Hyena Dart 1.2.1 release, the version commands print `hyena_dart 1.2.1` and `hyena_mcp 1.2.1` respectively.
+You should see the `analyze`, `dead-code`, and `complexity` commands. The version commands print `hyena_dart 2.0.0` and `hyena_mcp 2.0.0` respectively.
+
+See [Migrating from v1.x to v2.0](/docs/migrating-to-v2/) before updating an existing installation.

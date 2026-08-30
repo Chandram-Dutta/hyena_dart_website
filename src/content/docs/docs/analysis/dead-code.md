@@ -12,7 +12,7 @@ The dead-code analyzer resolves Dart syntax to analyzer elements, records declar
 3. Resolve every included compilation unit with the official Dart analyzer.
 4. Record declarations with source-and-offset identities for their resolved analyzer elements.
 5. Record references as edges from the declaration that contains each reference.
-6. Establish roots such as `main`, overrides, top-level references, and configured exports.
+6. Establish roots such as `main`, overrides, top-level references, and configured entry points.
 7. Traverse the graph from all roots.
 8. Report declarations not in the reachable set.
 
@@ -59,26 +59,29 @@ Both lists default to empty. See [Framework and generated-code entry roots](/doc
 
 ## Export handling
 
-With the default `ignore_exports: true`, Hyena treats public declarations in directly importable package libraries as API roots. A file under `lib/` is directly importable unless its package-relative path begins with `src/`. Declarations in a library's `part` files inherit that library's visibility.
+`ignore_exports` defaults to `false` in v2, so unreachable public declarations are findings alongside unreachable private declarations. Public visibility alone does not keep a declaration reachable.
 
-Hyena also identifies public top-level declarations exposed by explicit `export` directives among the scanned units. It honors `show` and `hide` combinators and follows every conditional export branch conservatively.
+Reusable package authors can enable `ignore_exports` to preserve a public API that is intentionally consumed outside the analyzed project. With `ignore_exports: true`, Hyena treats public declarations in directly importable package libraries as API roots. A file under `lib/` is directly importable unless its package-relative path begins with `src/`. Declarations in a library's `part` files inherit that library's visibility.
 
-An exported container also protects its public members and public constructors as roots. Private members remain candidates unless `ignore_private` is also enabled.
+When export preservation is enabled, Hyena identifies public top-level declarations exposed by explicit `export` directives among the scanned units. It honors `show` and `hide` combinators and follows every conditional export branch conservatively.
+
+An exported container then protects its public members and public constructors as roots. Private members remain candidates unless `ignore_private` is also enabled.
 
 ```dart title="lib/package.dart"
 export 'src/client.dart' show Client;
 ```
 
-`Client` and its public surface are treated conservatively as externally reachable.
+With `ignore_exports` enabled, `Client` and its public surface are treated conservatively as externally reachable.
 
 :::caution[Scan boundary]
 Export and part discovery resolves relative and `package:` URIs using `.dart_tool/package_config.json`. Hyena can protect only declarations whose source files are included in the current scan.
 :::
 
-Use `--no-ignore-exports` to include exported declarations as candidates:
+Both the combined and dead-code-only commands accept a one-run override:
 
 ```shell
-hyena_dart dead-code lib --no-ignore-exports
+dart run hyena_dart analyze lib --ignore-exports
+dart run hyena_dart dead-code lib --ignore-exports
 ```
 
 ## Private and main declarations
@@ -86,7 +89,7 @@ hyena_dart dead-code lib --no-ignore-exports
 `ignore_private` defaults to `false`, so unused private declarations are reported. Enable it when private hooks are invoked indirectly by tooling or conventions:
 
 ```shell
-hyena_dart dead-code lib --ignore-private
+dart run hyena_dart dead-code lib --ignore-private
 ```
 
 `ignore_main` defaults to `true` and is only configurable in YAML. It omits `main` from the declaration count and candidate set. `main` remains a graph root either way.

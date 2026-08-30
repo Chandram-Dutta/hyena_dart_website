@@ -12,10 +12,13 @@ const description =
 const mcpConfig = `{
   "mcpServers": {
     "hyena": {
-      "command": "hyena_mcp",
+      "command": "dart",
+      "cwd": "/absolute/path/to/project",
       "args": [
+        "run",
+        "hyena_dart:hyena_mcp",
         "--root",
-        "/absolute/project"
+        "."
       ]
     }
   }
@@ -45,7 +48,9 @@ const mcpCall = `hyena_analyze({
             Read the docs
           </a>
         </div>
-        <p class="version-note">v1.2.1 · Dart SDK 3.10+ · MIT licensed · local-first</p>
+        <p class="version-note">
+          <a href="/docs/migrating-to-v2/">v2.0.0</a> · current release · Dart SDK 3.10+
+        </p>
       </div>
 
       <figure class="terminal-wrap" aria-label="Example Hyena report">
@@ -63,7 +68,7 @@ const mcpCall = `hyena_analyze({
             <span>hyena / report</span>
             <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
           </div>
-          <pre><code><span class="prompt">$</span> hyena_dart analyze lib --no-color
+          <pre><code><span class="prompt">$</span> dart run hyena_dart analyze lib --no-color
 
 HYENA CODE ANALYSIS REPORT
 ────────────────────────────────
@@ -80,11 +85,11 @@ COMPLEXITY
 <span class="label">Threshold violations:</span> <span class="warning">5</span></code></pre>
         </div>
         <div class="quick-command">
-          <code>dart pub global activate hyena_dart</code>
+          <code>dart pub add dev:hyena_dart</code>
           <button
             class="copy-button"
             type="button"
-            data-copy="dart pub global activate hyena_dart"
+            data-copy="dart pub add dev:hyena_dart"
             aria-label="Copy install command"
           >Copy</button>
         </div>
@@ -107,9 +112,9 @@ COMPLEXITY
           </div>
           <h2>One bounded tool for AI-assisted review.</h2>
           <p class="mcp-lede">
-            Start <code>hyena_mcp</code> with one absolute project root. An MCP
-            client receives exactly one read-only tool for relative Dart paths
-            and selected checks.
+            Run <code>hyena_dart:hyena_mcp</code> from the project that pins
+            Hyena. <code>--root .</code> confines its one read-only tool to that
+            project and relative Dart targets.
           </p>
           <ul class="mcp-facts" aria-label="MCP integration properties">
             <li>
@@ -154,16 +159,16 @@ COMPLEXITY
         </div>
         <p>
           Use the defaults first. Add a config only when generated files,
-          public exports, or your team's complexity limits need different
+          reusable public APIs, or your team's complexity limits need different
           treatment.
         </p>
       </div>
       <div class="workflow-grid">
         <article class="workflow-step">
           <span class="step-number">01 / Install</span>
-          <h3>Activate the CLI</h3>
-          <p>Install the published executable into your Dart global cache.</p>
-          <code>dart pub global activate hyena_dart</code>
+          <h3>Pin it to the project</h3>
+          <p>Add Hyena as a development dependency so local and CI runs use the same version.</p>
+          <code>dart pub add dev:hyena_dart</code>
         </article>
         <article class="workflow-step">
           <span class="step-number">02 / Prepare</span>
@@ -175,7 +180,7 @@ COMPLEXITY
           <span class="step-number">03 / Analyze</span>
           <h3>Choose a file or directory</h3>
           <p>Analyze the package, a subdirectory, or one Dart file while iterating.</p>
-          <code>hyena_dart analyze .</code>
+          <code>dart run hyena_dart analyze .</code>
         </article>
       </div>
     </div>
@@ -204,7 +209,7 @@ COMPLEXITY
             <h3>Reachability-based dead code</h3>
             <p>
               Reports declarations that cannot be reached from entry points,
-              inherited implementations, top-level references, and public API roots.
+              inherited implementations, top-level references, and configured roots.
             </p>
             <ul class="tag-list" aria-label="Supported dead-code entities">
               <li>classes</li><li>mixins</li><li>extensions</li>
@@ -348,7 +353,7 @@ COMPLEXITY
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">03</span>
-          <span><strong>Exports are conservative by default.</strong> Directly importable libraries, parts, and every conditional branch are treated as reachable.</span>
+          <span><strong>Public code is checked by default in v2.</strong> Reusable packages can preserve exported APIs explicitly with <code>ignore_exports: true</code>.</span>
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">04</span>

@@ -10,7 +10,7 @@ Hyena returns exit code 0 for findings by default. CI can opt into exit code 1 f
 Add Hyena as a development dependency so local and CI runs resolve the same package range:
 
 ```shell
-dart pub add --dev hyena_dart
+dart pub add dev:hyena_dart
 ```
 
 Commit the resulting `pubspec.yaml` and lockfile where your package type normally tracks it.
@@ -48,7 +48,9 @@ dart run hyena_dart analyze lib \
   --fail-on=dead-code,complexity
 ```
 
-Fingerprints use the rule, package-relative path, symbol type, and symbol identity rather than a source line. Adding lines above an unchanged finding does not invalidate it. Renames and moves to another file intentionally appear as new findings.
+Fingerprints use the rule, project- or workspace-relative path, symbol type, and symbol identity rather than a source line. Adding lines above an unchanged finding does not invalidate it. Renames and moves to another file intentionally appear as new findings.
+
+Existing v1.x baselines remain compatible with v2. Baseline paths were already relative; do not regenerate the file solely because console, JSON, Markdown, and HTML now consistently use project-relative paths.
 
 :::tip
 Refresh a baseline only after reviewing the difference. Rewriting it automatically on every CI run would accept the new findings that it is meant to catch.

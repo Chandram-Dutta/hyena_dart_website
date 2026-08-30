@@ -12,7 +12,7 @@ Each `FunctionMetrics` record contains:
 | Field | Meaning |
 | --- | --- |
 | `name` | Function name, `Class.method`, `Class.new`, named constructor, or `<closure@line:column>`. |
-| `filePath` / `line` | Source location. |
+| `filePath` / `line` | Project-relative source location, or workspace-relative location for a workspace. |
 | `cyclomaticComplexity` | Base path plus counted branch points. |
 | `linesOfCode` | Unique non-blank physical lines in the executable body and constructor initializers. |
 | `maxNestingLevel` | Deepest counted control structure. |
@@ -108,7 +108,7 @@ A function is in `thresholdViolations` if **any** metric is strictly greater tha
 Configure all limits in YAML or override only cyclomatic complexity on the dedicated command:
 
 ```shell
-hyena_dart complexity lib --threshold=15
+dart run hyena_dart complexity lib --threshold=15
 ```
 
 See [configuration](/docs/configuration/) for the complete schema.

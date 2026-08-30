@@ -10,59 +10,43 @@ Hyena can expose source analysis to AI clients over the Model Context Protocol (
 The tool reads Dart source under one configured project root and returns structured dead-code and complexity findings. It does not modify the project or execute target code.
 
 :::note[MCP server available since v1.1.2]
-The `hyena_mcp` executable and its bounded `hyena_analyze` tool are included in Hyena Dart 1.1.2 and later.
+The bounded MCP server and its `hyena_analyze` tool were introduced in Hyena Dart v1.1.2. The project-local launch workflow below is required in v2.0.0.
 :::
 
 ## Configure an MCP client
 
-Activate Hyena Dart 1.1.2 or later and confirm that the MCP executable is available:
+Add Hyena to the Dart or Flutter project that the client may inspect. From that project root, start the server with:
 
 ```shell
-dart pub global activate hyena_dart
-hyena_mcp --help
+dart run hyena_dart:hyena_mcp --root .
 ```
 
 :::note[Version flag available in v1.2.0]
-`hyena_mcp --version` is included in Hyena Dart 1.2.0 and later and does not require `--root`. The MCP server itself was introduced in v1.1.2. See [Version output](/docs/cli-reference/#version-output).
+The MCP version flag was added in v1.2.0 and does not require `--root`. In v2, query it with `dart run hyena_dart:hyena_mcp --version`. See [Version output](/docs/cli-reference/#version-output).
 :::
 
-Start the server with `--root` set to the absolute path of one Dart or Flutter project. A typical MCP client entry is:
-
-```json title="mcp.json"
-{
-  "mcpServers": {
-    "hyena": {
-      "command": "hyena_mcp",
-      "args": [
-        "--root",
-        "/absolute/path/to/project"
-      ]
-    }
-  }
-}
-```
-
-The surrounding configuration file and key names vary by MCP client. Keep the command and arguments unchanged, and replace the example root with a reviewed absolute path. Do not use a home directory or a broad monorepo parent when the client only needs one project.
-
-For source-checkout testing of Hyena itself, run the MCP client from the Hyena repository and use the repository executable instead:
+MCP clients are often launched outside the target project. Set the spawned process's working directory so package resolution still occurs in the reviewed project:
 
 ```json title="mcp.json"
 {
   "mcpServers": {
     "hyena": {
       "command": "dart",
+      "cwd": "/absolute/path/to/project",
       "args": [
         "run",
-        "bin/hyena_mcp.dart",
+        "hyena_dart:hyena_mcp",
         "--root",
-        "/absolute/path/to/hyena_dart"
+        "."
       ]
     }
   }
 }
 ```
 
-Run `dart pub get` in the target project first. Dead-code resolution can require its generated package configuration and installed dependencies.
+Replace `/absolute/path/to/project` with the reviewed Dart or Flutter project that declares Hyena in `dev_dependencies`. `cwd` makes `dart run` resolve the Hyena version locked by that project. After the working directory changes, `--root .` confines accepted targets and automatic configuration discovery to that same project.
+
+The surrounding configuration file and working-directory key vary by MCP client; use its equivalent of `cwd` while preserving this working-directory/root relationship. Dart 3.10 does not accept a top-level `-C` option. Do not select a home directory or broad monorepo parent when the client needs only one project. Run `dart pub get` in the target project first; dead-code resolution can require its generated package configuration and installed dependencies.
 
 ## Tool input
 
@@ -100,7 +84,7 @@ For each call, Hyena:
 3. counts Dart files and source bytes before analysis;
 4. discovers `hyena.yaml` or `analysis_options.yaml` without searching above the root;
 5. runs the requested analyzers in a killable isolate;
-6. converts findings to workspace-relative structured metadata; and
+6. converts findings to project-relative or workspace-relative structured metadata; and
 7. sorts findings by path, line, and rule before returning the bounded result.
 
 Only one analysis request runs at a time. A second overlapping call receives an error instead of being queued.
@@ -186,7 +170,7 @@ It provides:
 - stdio transport only;
 - one tool, `hyena_analyze`;
 - dead-code and complexity analysis for a relative target; and
-- schema-versioned, workspace-relative structured results.
+- schema-versioned, project-relative or workspace-relative structured results.
 
 It does **not** provide:
 
@@ -232,12 +216,12 @@ Contributors using a source checkout can use:
 
 The skill configures the repository-local MCP server, filters the client to `hyena_analyze`, treats findings as review evidence rather than deletion instructions, and asks the agent to inspect code before making changes.
 
-The skill is repository tooling and is excluded from pub.dev archives. Package consumers do not receive it from `dart pub global activate`.
+The skill is repository tooling and is excluded from pub.dev archives. Projects that add Hyena as a dependency do not receive it.
 
 When MCP is unavailable, the skill documents this read-only JSON CLI fallback:
 
 ```shell
-dart run bin/hyena_dart.dart analyze <relative-path> --format=json
+dart run hyena_dart analyze <relative-path> --format=json
 ```
 
 For that fallback, do not pass `--output`, `--write-baseline`, or an arbitrary `--config` path. Use a reviewed literal relative path rather than shell interpolation from source-controlled text.

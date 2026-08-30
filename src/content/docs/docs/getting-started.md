@@ -5,13 +5,21 @@ description: Install Hyena, run a complete analysis, and generate a useful repor
 
 This guide runs both analyzers with their defaults and then adds a small project configuration.
 
-## 1. Activate the CLI
+## 1. Add Hyena to the project
+
+For Dart:
 
 ```shell
-dart pub global activate hyena_dart
+dart pub add dev:hyena_dart
 ```
 
-Prefer a project-pinned tool? Follow the [development dependency instructions](/docs/installation/#project-development-dependency) and prefix later commands with `dart run`.
+For Flutter:
+
+```shell
+flutter pub add dev:hyena_dart
+```
+
+Hyena v2 is run through the project dependency. Every command below resolves the version pinned by this project.
 
 ## 2. Resolve the target package
 
@@ -26,20 +34,22 @@ This creates or updates `.dart_tool/package_config.json`, which dead-code analys
 ## 3. Run both analyzers
 
 ```shell
-hyena_dart analyze .
+dart run hyena_dart analyze .
 ```
 
 The optional path is the first positional argument. If it is omitted, Hyena uses the current directory. Pointing at `lib` is useful when you do not want to include test and tool code:
 
 ```shell
-hyena_dart analyze lib
+dart run hyena_dart analyze lib
 ```
 
 You can also inspect one Dart file while iterating:
 
 ```shell
-hyena_dart analyze lib/src/cache.dart
+dart run hyena_dart analyze lib/src/cache.dart
 ```
+
+Reported paths always start at the project root, not at the selected target. The two examples above therefore report files such as `lib/src/cache.dart`; a one-file run also reports that same project-relative path.
 
 The console report contains:
 
@@ -65,7 +75,7 @@ hyena:
 
   dead_code:
     ignore_main: true
-    ignore_exports: true
+    ignore_exports: false
     ignore_private: false
 ```
 
@@ -78,7 +88,7 @@ Start by excluding only generated or deliberately out-of-scope files. Broad patt
 ## 5. Write a reviewable report
 
 ```shell
-hyena_dart analyze lib \
+dart run hyena_dart analyze lib \
   --format=markdown \
   --output=hyena-report.md
 ```
@@ -86,14 +96,14 @@ hyena_dart analyze lib \
 For data processing or CI, choose JSON instead:
 
 ```shell
-hyena_dart analyze lib --format=json --output=hyena-report.json
+dart run hyena_dart analyze lib --format=json --output=hyena-report.json
 ```
 
 To make findings enforceable without failing on existing debt, create a baseline once and commit it:
 
 ```shell
-hyena_dart analyze lib --write-baseline=hyena-baseline.json
-hyena_dart analyze lib \
+dart run hyena_dart analyze lib --write-baseline=hyena-baseline.json
+dart run hyena_dart analyze lib \
   --baseline=hyena-baseline.json \
   --fail-on=dead-code,complexity
 ```
@@ -102,6 +112,7 @@ hyena_dart analyze lib \
 
 - A threshold is violated only when a metric is **greater than** its limit. A cyclomatic score of 20 does not violate the default threshold of 20.
 - The CLI returns 0 for findings by default. Use `--fail-on` to select which finding categories should return exit code 1. See [CI and automation](/docs/ci/).
+- Unused public and private declarations are both reported by default in v2. Reusable package authors can preserve exported public API with `ignore_exports: true` or `--ignore-exports`.
 - Dead-code findings are static reachability results. Reflection, generated registration, and behavior outside the scanned source can require exclusions or manual review.
 
 Next: use the [CLI reference](/docs/cli-reference/) or read how [dead-code reachability](/docs/analysis/dead-code/) works.

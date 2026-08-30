@@ -18,6 +18,7 @@ It analyzes a Dart file or recursively scans a directory and can write console, 
 | --- | --- |
 | Run Hyena once | [Getting started](/docs/getting-started/) |
 | Pick an installation model | [Installation](/docs/installation/) |
+| Upgrade an existing v1.x project | [Migrate to v2.0](/docs/migrating-to-v2/) |
 | Look up a command or flag | [CLI reference](/docs/cli-reference/) |
 | Exclude files or change thresholds | [Configuration](/docs/configuration/) |
 | Analyze a Dart workspace or monorepo | [Workspaces and monorepos](/docs/workspaces/) |
@@ -40,7 +41,7 @@ hyena:
     max_parameters: 6
   dead_code:
     ignore_main: true
-    ignore_exports: true
+    ignore_exports: false
     ignore_private: false
     entry_points: []
     entry_point_annotations: []
@@ -49,8 +50,14 @@ hyena:
 Hyena also excludes `*.g.dart`, `*.freezed.dart`, `*.mocks.dart`, and any path containing a directory segment named `generated`, even when they are not listed in `exclude`.
 
 :::note[Version scope]
-These docs cover Hyena Dart 1.2.1, the current published release.
+These docs cover Hyena Dart v2.0.0, the current published release.
 :::
+
+## Available in v2.0.0
+
+Hyena Dart v2.0.0 moves to [project-local installation and execution](/docs/installation/), reports unused public and private declarations by default, and makes console, JSON, Markdown, and HTML paths consistently relative to the package or workspace root.
+
+Existing v1.x projects should read [Migrating from v1.x to v2.0](/docs/migrating-to-v2/) before upgrading. Existing baseline fingerprints remain valid; SARIF, baseline, and MCP paths were already relative in v1.x.
 
 ## Fixed in v1.2.1
 
@@ -63,7 +70,7 @@ Hyena Dart 1.2.1:
 
 Hyena Dart 1.2.0 adds:
 
-- [`hyena_dart --version` and `hyena_mcp --version`](/docs/cli-reference/#version-output), with release checks that keep runtime output aligned with the package version;
+- [CLI and MCP version output](/docs/cli-reference/#version-output), with release checks that keep runtime output aligned with the package version;
 - [package-scoped Dart workspace analysis](/docs/workspaces/) with workspace-relative findings; and
 - [configured declaration and annotation entry roots](/docs/configuration/#framework-and-generated-code-entry-roots) for framework- or generated-code reachability.
 
@@ -71,6 +78,8 @@ Hyena Dart 1.2.0 adds:
 
 - [Source repository](https://github.com/Chandram-Dutta/hyena_dart)
 - [Package on pub.dev](https://pub.dev/packages/hyena_dart)
+- [v2.0.0 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v2.0.0)
+- [v1.2.4 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.4)
 - [v1.2.1 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.1)
 - [v1.2.0 release notes](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v1.2.0)
 - [Issue tracker](https://github.com/Chandram-Dutta/hyena_dart/issues)

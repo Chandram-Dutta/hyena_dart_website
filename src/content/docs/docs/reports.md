@@ -6,12 +6,22 @@ description: Choose console, JSON, Markdown, HTML, or SARIF output and understan
 All commands build an `AnalysisResult` and pass it to one reporter. Select a format with `--format` and write it with `--output`.
 
 ```shell
-hyena_dart analyze lib --format=json --output=hyena-report.json
+dart run hyena_dart analyze lib --format=json --output=hyena-report.json
 ```
 
 Without `--output`, the generated content is printed to stdout.
 
 When `--baseline` is present, baseline-matched findings are removed before any reporter runs. Every format therefore shows only current, unsuppressed findings.
+
+## Path basis
+
+Every user-facing target and source path is relative to the package root, or to the common workspace root for workspace analysis. This applies to console, JSON, Markdown, HTML, SARIF, baselines, and MCP.
+
+- `dart run hyena_dart analyze lib` reports `lib/src/cache.dart`.
+- An analysis of the single file `lib/src/cache.dart` still reports `lib/src/cache.dart`.
+- A workspace member reports a path such as `packages/cache/lib/src/cache.dart`.
+
+In v2, this makes console, JSON, Markdown, and HTML portable across checkout locations. JSON `targetPath` and every `filePath` use the same project- or workspace-relative basis. Baseline fingerprints, SARIF locations, and MCP finding paths were already relative in v1.x and remain compatible.
 
 ## Console
 
@@ -105,7 +115,7 @@ Markdown is suited to pull-request comments, issue attachments, and checked-in s
 - Complexity sections include summary counts, every threshold violation, and collapsible summaries for all files.
 
 ```shell
-hyena_dart dead-code lib -f markdown -o dead-code.md
+dart run hyena_dart dead-code lib -f markdown -o dead-code.md
 ```
 
 ## HTML
@@ -113,7 +123,7 @@ hyena_dart dead-code lib -f markdown -o dead-code.md
 HTML creates a self-contained document with embedded styles and no external assets. It includes summary cards, grouped dead-code tables, and a complexity violation table.
 
 ```shell
-hyena_dart analyze lib -f html -o report.html
+dart run hyena_dart analyze lib -f html -o report.html
 ```
 
 The HTML reporter lists all findings it receives. Keep reports private when source paths or declaration names are sensitive.
@@ -124,19 +134,19 @@ The HTML reporter lists all findings it receives. Keep reports private when sour
 Package-scoped Dart workspace reporting is included in Hyena Dart 1.2.0 and later.
 :::
 
-For a target root that declares `workspace`, console, JSON, Markdown, and HTML preserve a separate result section for the root package and each member. Workspace JSON adds `workspace.packageCount` and a `packages` array.
+For a target root that declares `workspace`, console, JSON, Markdown, and HTML preserve a separate result section for the root package and each member. Workspace JSON adds `workspace.packageCount` and a `packages` array. Every package section still uses paths relative to the common workspace root.
 
-SARIF locations, baseline fingerprint paths, and MCP finding paths use the common workspace root rather than an absolute member path. See [Workspaces and monorepos](/docs/workspaces/#package-scoped-reports) for boundary and configuration behavior.
+SARIF locations, baseline fingerprint paths, and MCP finding paths also use the common workspace root. See [Workspaces and monorepos](/docs/workspaces/#package-scoped-reports) for boundary and configuration behavior.
 
 ## SARIF
 
 SARIF 2.1 is intended for code-scanning systems and editor integrations. Hyena emits rules for dead code and each complexity threshold, physical source locations, finding properties, and stable partial fingerprints.
 
 ```shell
-hyena_dart analyze . --format=sarif --output=hyena.sarif
+dart run hyena_dart analyze . --format=sarif --output=hyena.sarif
 ```
 
-The output is one SARIF run whose driver is `hyena_dart`. Paths are package-relative when the target belongs to a Dart package. Use `--baseline` to omit accepted findings before uploading the file.
+The output is one SARIF run whose driver is `hyena_dart`. Locations are project-relative for a package and workspace-relative for a workspace. Use `--baseline` to omit accepted findings before uploading the file.
 
 ## Programmatic reporters
 

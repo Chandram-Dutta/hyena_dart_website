@@ -20,7 +20,7 @@ hyena:
 
   dead_code:
     ignore_main: true
-    ignore_exports: true
+    ignore_exports: false
     ignore_private: false
     entry_points: []
     entry_point_annotations: []
@@ -37,12 +37,25 @@ All fields are optional. Missing sections and values use defaults.
 | `hyena.complexity.max_nesting` | non-negative integer | `5` | Flag functions with a greater maximum nesting level. |
 | `hyena.complexity.max_parameters` | non-negative integer | `6` | Flag functions with a greater formal parameter count. |
 | `hyena.dead_code.ignore_main` | boolean | `true` | Do not record `main` as a dead-code candidate. `main` is still a reachability root. |
-| `hyena.dead_code.ignore_exports` | boolean | `true` | Keep directly exported API out of dead-code findings and use it as a reachability root. |
+| `hyena.dead_code.ignore_exports` | boolean | `false` | Keep directly exported API out of dead-code findings and use it as a reachability root. |
 | `hyena.dead_code.ignore_private` | boolean | `false` | Keep private declarations out of findings and use them as reachability roots. |
 | `hyena.dead_code.entry_points` | list of non-empty strings | `[]` | Declaration names retained as reachability roots. |
 | `hyena.dead_code.entry_point_annotations` | list of non-empty strings | `[]` | Annotations whose declarations are retained as roots. |
 
 Threshold comparisons are strict: **metric > threshold**. Equality is not a violation.
+
+## Default dead-code policy
+
+With both `ignore_exports` and `ignore_private` set to `false`, v2 reports unreachable public and private declarations by default. This is intended for application projects, where public visibility does not necessarily mean that another package consumes the declaration.
+
+Reusable package authors can set `ignore_exports: true` when the exported public surface is intentionally consumed outside the analyzed project. For one run, both `analyze` and `dead-code` accept `--ignore-exports` and `--ignore-private`:
+
+```shell
+dart run hyena_dart analyze . --ignore-exports
+dart run hyena_dart dead-code . --ignore-private
+```
+
+Command-line values override YAML only when the corresponding flag is explicitly passed.
 
 ## Framework and generated-code entry roots
 
@@ -115,7 +128,7 @@ When the target root declares a Dart workspace, Hyena discovers the nearest conf
 Pass an explicit file to skip discovery:
 
 ```shell
-hyena_dart analyze lib --config=tool/hyena-strict.yaml
+dart run hyena_dart analyze lib --config=tool/hyena-strict.yaml
 ```
 
 The YAML must contain a top-level `hyena:` mapping. A valid file without that key produces the default configuration.
