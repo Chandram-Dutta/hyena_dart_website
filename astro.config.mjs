@@ -97,6 +97,8 @@ export default defineConfig({
             { slug: 'docs' },
             { slug: 'docs/installation' },
             { slug: 'docs/getting-started' },
+            { slug: 'docs/faq' },
+            { slug: 'docs/migrating-to-v3' },
             { slug: 'docs/migrating-to-v2' },
           ],
         },

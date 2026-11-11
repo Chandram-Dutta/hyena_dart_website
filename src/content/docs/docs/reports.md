@@ -29,6 +29,7 @@ The default reporter is intended for interactive runs. It prints target and dura
 
 - Dead-code findings are grouped by entity type and limited to the first 20 in each group.
 - Complexity output shows up to 20 threshold violations.
+- Files that could not be analyzed are listed with their reasons in the dead-code and complexity sections.
 - `--no-color` removes ANSI styling.
 
 Use another format when truncation is undesirable.
@@ -57,7 +58,8 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
         "column": 9,
         "isPublic": false
       }
-    ]
+    ],
+    "skippedFiles": []
   },
   "complexity": {
     "analyzedAt": "2026-08-27T08:00:00.100000",
@@ -98,10 +100,18 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
           }
         ]
       }
+    ],
+    "skippedFiles": [
+      {
+        "filePath": "lib/src/broken.dart",
+        "reason": "<reason>"
+      }
     ]
   }
 }
 ```
+
+Both the `deadCode` and `complexity` sections include a `skippedFiles` array of files that could not be analyzed, each with a `filePath` and a single-line `reason`. The array is empty when nothing was skipped. Markdown, HTML, and SARIF reports do not currently include skipped files; use console or JSON output, or the CLI's `Warning: skipped` lines on stderr.
 
 Numeric-looking percentages, durations, averages, Halstead volume, and maintainability values are encoded as strings. Counts and thresholds are integers.
 

@@ -19,7 +19,7 @@ For Flutter:
 flutter pub add dev:hyena_dart
 ```
 
-Hyena v2 is run through the project dependency. Every command below resolves the version pinned by this project.
+Hyena is run through the project dependency and requires Dart SDK 3.11 or newer. Every command below resolves the version pinned by this project.
 
 ## 2. Resolve the target package
 
@@ -82,7 +82,7 @@ hyena:
 Run the same command again. Hyena searches from the target directory upward and loads the first `hyena.yaml` or `analysis_options.yaml` it finds.
 
 :::tip
-Start by excluding only generated or deliberately out-of-scope files. Broad patterns can make a report clean by hiding the code you intended to inspect.
+Start by excluding only deliberately out-of-scope files. Generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files are already handled automatically, so do not list them. Broad patterns can make a report clean by hiding the code you intended to inspect.
 :::
 
 ## 5. Write a reviewable report
@@ -111,8 +111,9 @@ dart run hyena_dart analyze lib \
 ## Read the result correctly
 
 - A threshold is violated only when a metric is **greater than** its limit. A cyclomatic score of 20 does not violate the default threshold of 20.
-- The CLI returns 0 for findings by default. Use `--fail-on` to select which finding categories should return exit code 1. See [CI and automation](/docs/ci/).
-- Unused public and private declarations are both reported by default in v2. Reusable package authors can preserve exported public API with `ignore_exports: true` or `--ignore-exports`.
+- The CLI returns 0 for findings by default. Use `--fail-on` to select which finding categories should return exit code 1. Exit code 2 means Hyena could not finish. See [CI and automation](/docs/ci/#exit-codes).
+- A file that cannot be resolved or parsed is skipped with a `Warning: skipped <path>: <reason>` line on stderr; the rest of the target is still analyzed.
+- Unused public and private declarations are both reported by default. Reusable package authors can preserve exported public API with `ignore_exports: true` or `--ignore-exports`.
 - Dead-code findings are static reachability results. Reflection, generated registration, and behavior outside the scanned source can require exclusions or manual review.
 
 Next: use the [CLI reference](/docs/cli-reference/) or read how [dead-code reachability](/docs/analysis/dead-code/) works.

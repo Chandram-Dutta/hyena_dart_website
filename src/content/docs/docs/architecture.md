@@ -60,7 +60,7 @@ File line statistics are calculated outside the AST visitor from the original so
 
 ## Local development
 
-The repository expects Dart SDK `^3.10.3`.
+The repository expects Dart SDK `^3.11.0`.
 
 ```shell
 git clone https://github.com/Chandram-Dutta/hyena_dart.git

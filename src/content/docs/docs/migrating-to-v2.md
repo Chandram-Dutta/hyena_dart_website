@@ -5,8 +5,8 @@ sidebar:
   label: Migrate to v2.0
 ---
 
-:::note[Current release]
-Hyena Dart v2.0.0 is available on [pub.dev](https://pub.dev/packages/hyena_dart) and as a [GitHub release](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v2.0.0).
+:::note[Previous major release]
+This guide covers the v1.x to v2.0 upgrade. Hyena Dart v2.0.0 is still available as a [GitHub release](https://github.com/Chandram-Dutta/hyena_dart/releases/tag/v2.0.0). The current release is v3.0.0; after completing these steps, continue with [Migrating to v3.0](/docs/migrating-to-v3/).
 :::
 
 ## Pin and run Hyena in each project
@@ -53,7 +53,7 @@ If the client starts outside the project, set the spawned process's working dire
 }
 ```
 
-`cwd` selects the project whose lockfile resolves Hyena. `--root .` then confines accepted analysis targets and automatic configuration discovery to that project. Dart 3.10 does not accept a top-level `-C` option; use the MCP client's equivalent working-directory setting if it names the field differently. See [Safe AI and MCP](/docs/safe-ai-mcp/#configure-an-mcp-client) for the complete example.
+`cwd` selects the project whose lockfile resolves Hyena. `--root .` then confines accepted analysis targets and automatic configuration discovery to that project. Use the MCP client's equivalent working-directory setting if it names the field differently. Hyena v3 requires Dart 3.11+, which also lets you select the project with `dart -C /absolute/path/to/project run ...`; see [Safe AI and MCP](/docs/safe-ai-mcp/#configure-an-mcp-client) for the current example.
 
 ## Review the larger default finding set
 

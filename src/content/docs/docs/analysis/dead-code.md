@@ -9,14 +9,18 @@ The dead-code analyzer resolves Dart syntax to analyzer elements, records declar
 
 1. Collect the target Dart file, or recursively collect `*.dart` files under a target directory.
 2. Apply custom and built-in exclusions.
-3. Resolve every included compilation unit with the official Dart analyzer.
+3. Resolve every included compilation unit with the official Dart analyzer, skipping files that cannot be analyzed.
 4. Record declarations with source-and-offset identities for their resolved analyzer elements.
 5. Record references as edges from the declaration that contains each reference.
-6. Establish roots such as `main`, overrides, top-level references, and configured entry points.
+6. Establish roots such as `main`, overrides, top-level references, references from generated files, and configured entry points.
 7. Traverse the graph from all roots.
 8. Report declarations not in the reachable set.
 
-If any included file cannot be resolved or contains an analyzer error, the analysis stops and lists the failures. Run `dart pub get` in the target package before analysis.
+A file that fails to resolve, has analysis or syntax errors, or cannot be read is skipped. The CLI prints `Warning: skipped <path>: <reason>` to stderr and continues with the rest of the target; the exit code is unchanged. Declarations in a skipped file are not reported, and code that a resolvable-but-erroneous file references is still treated as used, so skipping it does not create false positives elsewhere. Run `dart pub get`, and any code generation, in the target package before analysis.
+
+## Generated files
+
+Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart`, including `part` files, contribute references but are never reported. Declarations used only by generated code, such as helpers called from a generated `fromJson` function, private freezed constructors, or interfaces implemented by mocks, therefore stay reachable. A stale generated file with errors is ignored rather than aborting the run. A custom `exclude` pattern that matches a generated file removes it, and its references, from analysis.
 
 ## Recorded declarations
 
@@ -59,7 +63,7 @@ Both lists default to empty. See [Framework and generated-code entry roots](/doc
 
 ## Export handling
 
-`ignore_exports` defaults to `false` in v2, so unreachable public declarations are findings alongside unreachable private declarations. Public visibility alone does not keep a declaration reachable.
+`ignore_exports` defaults to `false` (since v2), so unreachable public declarations are findings alongside unreachable private declarations. Public visibility alone does not keep a declaration reachable.
 
 Reusable package authors can enable `ignore_exports` to preserve a public API that is intentionally consumed outside the analyzed project. With `ignore_exports: true`, Hyena treats public declarations in directly importable package libraries as API roots. A file under `lib/` is directly importable unless its package-relative path begins with `src/`. Declarations in a library's `part` files inherit that library's visibility.
 
@@ -112,7 +116,8 @@ The declaration remains a graph root. Its reachable dependencies, such as `initi
 Treat a finding as a static reachability claim within the scanned and resolved source, not proof that deletion is always safe. Review code reached through:
 
 - reflection or string-based registration;
-- generated source that Hyena excludes;
+- source under excluded `generated`, `build`, or `.dart_tool` directories, or matched by a custom `exclude` pattern;
+- files skipped because they could not be analyzed;
 - native bindings, build scripts, or framework conventions;
 - consumers outside the scanned package or selected target.
 

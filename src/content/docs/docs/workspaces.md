@@ -18,7 +18,7 @@ A root can list package directories explicitly and with globs:
 ```yaml title="pubspec.yaml"
 name: company_workspace
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.11.0
 
 workspace:
   - apps/mobile
@@ -32,7 +32,7 @@ Every non-root member must opt into Dart workspace resolution:
 name: company_auth
 resolution: workspace
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.11.0
 ```
 
 Hyena supports explicit entries, nested workspace declarations, and glob entries. The accepted workspace syntax is ultimately determined by the installed Dart SDK, so use syntax that `dart pub get` accepts for the target project.
@@ -55,7 +55,7 @@ A discovered member can declare another workspace to add nested members:
 name: company_platform
 resolution: workspace
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.11.0
 
 workspace:
   - plugins/*
