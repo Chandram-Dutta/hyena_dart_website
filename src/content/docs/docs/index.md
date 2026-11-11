@@ -49,7 +49,7 @@ hyena:
     entry_point_annotations: []
 ```
 
-Hyena also excludes any path containing a directory segment named `.dart_tool`, `build`, or `generated`, even when it is not listed in `exclude`. Generated `*.g.dart`, `*.freezed.dart`, and `*.mocks.dart` files are handled automatically: dead-code analysis counts their references but never reports their declarations, and complexity analysis skips them. Do not list them in `exclude`.
+Hyena also excludes any path containing a directory segment named `.dart_tool`, `build`, or `generated`, even when it is not listed in `exclude`. Generated `*.g.dart`, `*.freezed.dart`, and `*.mocks.dart` files are handled automatically: dead-code analysis counts their references on a best-effort basis but never reports their declarations, and complexity analysis skips them. Do not list them in `exclude`. Generated files that fail resolution are silently ignored without a `skippedFiles` entry. Missing references can cause dead-code findings elsewhere; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 
 :::note[Version scope]
 These docs cover Hyena Dart v3.0.0, the current published release. It requires Dart SDK 3.11 or newer and `analyzer: ^14.0.0`.
@@ -60,9 +60,9 @@ These docs cover Hyena Dart v3.0.0, the current published release. It requires D
 Hyena Dart v3.0.0:
 
 - requires [Dart SDK 3.11+ and analyzer 14](/docs/installation/); other dev tools in the project must also accept analyzer 14.x;
-- [skips files that fail to resolve, parse, or read](/docs/ci/#skipped-files) with a `Warning: skipped <path>: <reason>` line instead of aborting the run;
+- [skips non-generated files that fail to resolve, parse, or read](/docs/ci/#skipped-files) with a `Warning: skipped <path>: <reason>` line instead of aborting the run;
 - uses [distinct exit codes](/docs/ci/#exit-codes): `0` completed, `1` findings tripped `--fail-on`, `2` tool error, `64` usage error;
-- counts references from generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files during dead-code analysis; and
+- counts references from generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files on a best-effort basis during dead-code analysis; and
 - removes the CLI runner and path helpers from the [public library exports](/docs/library-api/).
 
 Existing v2.x projects should read [Migrating from v2.x to v3.0](/docs/migrating-to-v3/) before upgrading.
