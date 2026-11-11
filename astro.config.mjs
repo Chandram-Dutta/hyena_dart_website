@@ -11,6 +11,10 @@ export default defineConfig({
   site: 'https://hyenadart.onlychan.xyz',
   output: 'static',
   vite: {
+    build: {
+      // Keep font files as same-origin assets; data: URIs are blocked by font-src 'self'.
+      assetsInlineLimit: (file) => (/\.woff2?$/.test(file) ? false : undefined),
+    },
     preview: {
       allowedHosts: ['.onamp.dev'],
     },
@@ -83,7 +87,10 @@ export default defineConfig({
         },
       ],
       disable404Route: true,
-      customCss: ['./src/styles/starlight.css'],
+      customCss: [
+        '@fontsource-variable/jetbrains-mono',
+        './src/styles/starlight.css',
+      ],
       expressiveCode: {
         styleOverrides: {
           borderRadius: '0.25rem',

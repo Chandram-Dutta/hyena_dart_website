@@ -1,128 +1,152 @@
+/* Docs theme: mirrors the landing page tokens (see src/styles/global.css). */
 :root {
-  /* Starlight appends its own generic system fallbacks to these variables. */
-  --sl-font: Inter, "Segoe UI", Arial;
-  --sl-font-mono: "SFMono-Regular", Consolas, "Liberation Mono";
-  --sl-color-accent-low: #d9f3f5;
-  --sl-color-accent: #08758c;
-  --sl-color-accent-high: #07384a;
-  --sl-color-white: #081b2c;
-  --sl-color-gray-1: #193145;
-  --sl-color-gray-2: #365064;
-  --sl-color-gray-3: #5f7282;
-  --sl-color-gray-4: #9aa7ad;
-  --sl-color-gray-5: #d3d5cf;
-  --sl-color-gray-6: #e8e5dc;
-  --sl-color-black: #f8f5ed;
-  --sl-content-width: 50rem;
-  --sl-text-h1: clamp(2.35rem, 5vw, 3.6rem);
+  /* Light */
+  --sl-font: "JetBrains Mono Variable", "JetBrains Mono";
+  --sl-font-mono: "JetBrains Mono Variable", "JetBrains Mono";
+  --sl-color-accent-low: color-mix(in oklch, oklch(54.6% 0.245 262.881) 14%, #fafafa);
+  --sl-color-accent: oklch(54.6% 0.245 262.881);
+  --sl-color-accent-high: oklch(42% 0.2 264);
+  --sl-color-white: oklch(21% 0.006 285.885); /* zinc-900 */
+  --sl-color-gray-1: oklch(37% 0.013 285.805); /* zinc-700 */
+  --sl-color-gray-2: oklch(44.2% 0.017 285.786); /* zinc-600 */
+  --sl-color-gray-3: oklch(55.2% 0.016 285.938); /* zinc-500 */
+  --sl-color-gray-4: oklch(70.5% 0.015 286.067); /* zinc-400 */
+  --sl-color-gray-5: oklch(92% 0.004 286.32); /* zinc-200 */
+  --sl-color-gray-6: oklch(96.7% 0.001 286.375); /* zinc-100 */
+  --sl-color-black: #fafafa;
+  --sl-content-width: 48rem;
+  --sl-text-h1: 1.875rem;
+  --sl-text-h2: 1.25rem;
+  --sl-text-h3: 1.0625rem;
+  --sl-text-h4: 1rem;
+  --sl-text-body: 0.9375rem;
+  --sl-line-height: 1.7;
 }
 
 :root[data-theme='dark'] {
-  --sl-color-accent-low: #123a4b;
-  --sl-color-accent: #67d4e5;
-  --sl-color-accent-high: #d9f8fb;
-  --sl-color-white: #f7f4ec;
-  --sl-color-gray-1: #e2edf0;
-  --sl-color-gray-2: #b8cbd2;
-  --sl-color-gray-3: #829ba8;
-  --sl-color-gray-4: #506977;
-  --sl-color-gray-5: #263e4c;
-  --sl-color-gray-6: #142b39;
-  --sl-color-black: #071a29;
+  --sl-color-accent-low: color-mix(in oklch, oklch(70.7% 0.165 254.624) 15%, #202023);
+  --sl-color-accent: oklch(70.7% 0.165 254.624);
+  --sl-color-accent-high: oklch(84% 0.09 254);
+  --sl-color-white: oklch(96.7% 0.001 286.375); /* zinc-100 */
+  --sl-color-gray-1: oklch(87.1% 0.006 286.286); /* zinc-300 */
+  --sl-color-gray-2: oklch(70.5% 0.015 286.067); /* zinc-400 */
+  --sl-color-gray-3: oklch(55.2% 0.016 285.938); /* zinc-500 */
+  --sl-color-gray-4: oklch(44.2% 0.017 285.786); /* zinc-600 */
+  --sl-color-gray-5: oklch(37% 0.013 285.805); /* zinc-700 */
+  --sl-color-gray-6: oklch(27.4% 0.006 286.033); /* zinc-800 */
+  --sl-color-black: #202023;
 }
 
 body {
-  /* Apply the stack directly to avoid Chromium expanding generic fallbacks
-     between Starlight's custom and system font variables. */
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
-  background-image:
-    linear-gradient(rgba(8, 27, 44, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(8, 27, 44, 0.022) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-:root[data-theme='dark'] body {
-  background-image:
-    linear-gradient(rgba(103, 212, 229, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(103, 212, 229, 0.022) 1px, transparent 1px);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  background-image: none;
 }
 
 header.header {
-  border-bottom-color: color-mix(in srgb, var(--sl-color-gray-5), transparent 15%);
-  backdrop-filter: blur(16px);
+  border-bottom-color: var(--sl-color-gray-5);
 }
 
 .site-title {
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  color: var(--sl-color-white);
+  font-weight: 500;
 }
 
 .site-title img {
-  border: 1px solid var(--sl-color-gray-5);
   border-radius: 0.25rem;
 }
 
 .sidebar-pane {
-  background: color-mix(in srgb, var(--sl-color-black), transparent 5%);
+  background: var(--sl-color-black);
 }
 
-.sidebar-content a[aria-current='page'] {
-  font-weight: 750;
+/* Current page: blue text with a thin left rule, no filled block. */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover {
+  background: transparent;
+  color: var(--sl-color-accent);
+  font-weight: 500;
+  box-shadow: inset 2px 0 0 var(--sl-color-accent);
 }
 
 .content-panel + .content-panel {
   border-top-color: var(--sl-color-gray-5);
 }
 
-.sl-markdown-content h1,
-.sl-markdown-content h2,
-.sl-markdown-content h3 {
-  letter-spacing: -0.035em;
+/* Prose */
+.sl-markdown-content {
+  font-size: var(--sl-text-body);
+  line-height: 1.7;
 }
 
-.sl-markdown-content h1 {
-  line-height: 1.05;
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+h1#_top {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+h1#_top {
+  line-height: 1.25;
 }
 
 .sl-markdown-content h2 {
-  padding-top: 0.55rem;
+  line-height: 1.35;
 }
 
+/* Links: zinc text, blue underline, blue on hover */
 .sl-markdown-content a:not(.sl-link-button) {
-  text-underline-offset: 0.2em;
+  color: var(--sl-color-gray-1);
+  text-decoration: underline;
+  text-decoration-color: var(--sl-color-accent);
+  text-underline-offset: 4px;
+  transition: color 0.2s cubic-bezier(0, 0, 0.2, 1);
 }
 
+.sl-markdown-content a:not(.sl-link-button):hover,
+.sl-markdown-content a:not(.sl-link-button):focus-visible {
+  color: var(--sl-color-accent);
+}
+
+/* Tables */
 .sl-markdown-content table {
   display: table;
   width: 100%;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .sl-markdown-content th {
-  background: var(--sl-color-gray-6);
-  color: var(--sl-color-gray-1);
-  font-family: var(--sl-font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.035em;
-  text-transform: uppercase;
+  background: transparent;
+  color: var(--sl-color-white);
+  font-weight: 500;
 }
 
+.sl-markdown-content :is(th, td) {
+  border-color: var(--sl-color-gray-5);
+}
+
+/* Inline code */
 .sl-markdown-content code:not(:where(.expressive-code *)) {
   border: 1px solid var(--sl-color-gray-5);
-  border-radius: 0.18rem;
+  border-radius: 0.25rem;
   background: var(--sl-color-gray-6);
+  font-size: 0.875em;
 }
 
-.expressive-code .frame {
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--sl-color-gray-4), transparent 75%);
+/* Code frames: flat, no offset shadow */
+.expressive-code .frame,
+.expressive-code .frame pre {
+  box-shadow: none;
 }
 
 .starlight-aside {
-  border-radius: 0.2rem;
+  border-radius: 0.25rem;
 }
 
 .pagination-links a {
   border-radius: 0.25rem;
+  box-shadow: none;
 }
 
 @media (max-width: 50rem) {
