@@ -33,7 +33,7 @@ All fields are optional. Missing sections and values use defaults.
 
 | YAML path | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `hyena.exclude` | list of strings | `[]` | Glob patterns matched against both the process-relative and full file path. |
+| `hyena.exclude` | list of strings | `[]` | Glob patterns matched against both the target-relative and absolute file path (for a file target, relative to its parent; in a workspace, relative to each package). |
 | `hyena.complexity.cyclomatic_threshold` | non-negative integer | `20` | Flag functions with greater cyclomatic complexity. |
 | `hyena.complexity.max_nesting` | non-negative integer | `5` | Flag functions with a greater maximum nesting level. |
 | `hyena.complexity.max_parameters` | non-negative integer | `6` | Flag functions with a greater formal parameter count. |
@@ -90,7 +90,7 @@ Both lists are empty by default, so existing projects keep their prior reachabil
 | --- | --- | --- |
 | `register` | Any declaration whose simple name is exactly `register` | `registerAll` |
 | `ServiceRegistry.register` | The `register` member owned by `ServiceRegistry` | `OtherRegistry.register` |
-| `AppRoutes` | The `AppRoutes` type declaration | A different type or member |
+| `AppRoutes` | Any supported declaration whose simple name is exactly `AppRoutes` | `AppRoutesExtra` |
 
 Use a qualified owner and member when a common simple name would preserve too much code. The matcher does not use substring or pattern matching.
 
@@ -132,7 +132,7 @@ Pass an explicit file to skip discovery:
 dart run hyena_dart analyze lib --config=tool/hyena-strict.yaml
 ```
 
-The YAML must contain a top-level `hyena:` mapping. A valid file without that key produces the default configuration.
+Options must be under a top-level `hyena:` mapping. A valid file without that key produces the default configuration.
 
 ## Use `analysis_options.yaml`
 
@@ -166,7 +166,7 @@ Both analyzers recursively discover `*.dart` files. Custom patterns are checked 
 
 Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart` are handled automatically; do not list them in `exclude`.
 
-- **Dead-code analysis** counts references from generated files, including `part` files, so declarations used only by generated code stay reachable. Declarations inside generated files are never reported.
+- **Dead-code analysis** counts references from generated files, including `part` files, when resolution and reference visiting succeed; their declarations are never reported. Failed generated-file resolution can cause dead-code findings without a warning or `skippedFiles` entry; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 - **Complexity analysis** skips generated files.
 
 A custom `exclude` pattern that matches a generated file still removes it from analysis entirely, including its references.
