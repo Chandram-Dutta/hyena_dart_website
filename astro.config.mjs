@@ -89,6 +89,7 @@ export default defineConfig({
       disable404Route: true,
       customCss: [
         '@fontsource-variable/jetbrains-mono',
+        '@fontsource-variable/source-serif-4/opsz.css',
         './src/styles/starlight.css',
       ],
       expressiveCode: {

@@ -1,8 +1,8 @@
 /* Docs theme: mirrors the landing page tokens (see src/styles/global.css). */
 :root {
   /* Light */
-  --sl-font: "JetBrains Mono Variable", "JetBrains Mono";
-  --sl-font-mono: "JetBrains Mono Variable", "JetBrains Mono";
+  --sl-font: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  --sl-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
   --sl-color-accent-low: color-mix(in oklch, oklch(54.6% 0.245 262.881) 14%, #fafafa);
   --sl-color-accent: oklch(54.6% 0.245 262.881);
   --sl-color-accent-high: oklch(42% 0.2 264);
@@ -19,8 +19,8 @@
   --sl-text-h2: 1.25rem;
   --sl-text-h3: 1.0625rem;
   --sl-text-h4: 1rem;
-  --sl-text-body: 0.9375rem;
-  --sl-line-height: 1.7;
+  --sl-text-body: 1rem;
+  --sl-line-height: 1.65;
 }
 
 :root[data-theme='dark'] {
@@ -38,8 +38,23 @@
 }
 
 body {
-  font-family: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
   background-image: none;
+}
+
+/* UI chrome stays mono; prose and headings use the serif from --sl-font. */
+header.header,
+.sidebar-content,
+starlight-toc,
+mobile-starlight-toc,
+site-search,
+starlight-menu-button,
+starlight-theme-select,
+.sl-link-button,
+.starlight-aside__title,
+.sl-markdown-content th,
+.pagination-links,
+footer {
+  font-family: var(--sl-font-mono);
 }
 
 header.header {
@@ -75,7 +90,7 @@ header.header {
 /* Prose */
 .sl-markdown-content {
   font-size: var(--sl-text-body);
-  line-height: 1.7;
+  line-height: var(--sl-line-height);
 }
 
 .sl-markdown-content h1,
@@ -84,7 +99,6 @@ header.header {
 .sl-markdown-content h4,
 h1#_top {
   font-weight: 500;
-  letter-spacing: -0.01em;
 }
 
 h1#_top {
@@ -113,11 +127,12 @@ h1#_top {
 .sl-markdown-content table {
   display: table;
   width: 100%;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
 }
 
 .sl-markdown-content th {
   background: transparent;
+  font-size: 0.8125rem;
   color: var(--sl-color-white);
   font-weight: 500;
 }
