@@ -5,6 +5,8 @@ description: See exactly how Hyena counts cyclomatic complexity, nesting, LOC, p
 
 Complexity analysis parses every included Dart file and emits metrics for top-level functions, methods, constructors, and closures. Nested closures are reported separately and excluded from the enclosing function's measurements.
 
+Generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files are skipped automatically. A file that cannot be read or parsed is left out of the report and listed in `skippedFiles`; the CLI prints `Warning: skipped <path>: <reason>` to stderr and continues.
+
 ## Reported units
 
 Each `FunctionMetrics` record contains:

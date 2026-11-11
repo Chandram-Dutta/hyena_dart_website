@@ -3,7 +3,7 @@ title: CLI reference
 description: Commands, flags, defaults, and examples for the Hyena Dart executable.
 ---
 
-Hyena v2 runs from the project's resolved development dependency. Invoke the analysis entry point with `dart run hyena_dart`; v2 does not support a global command mapping.
+Hyena runs from the project's resolved development dependency. Invoke the analysis entry point with `dart run hyena_dart`; global command mappings are not supported (since v2).
 
 Hyena Dart 1.1.2 introduced the separate, bounded MCP entry point, now invoked as `dart run hyena_dart:hyena_mcp`. It does not expose the regular CLI flags or reporters; see [Safe AI and MCP](/docs/safe-ai-mcp/) for its exact contract.
 
@@ -27,8 +27,8 @@ dart run hyena_dart:hyena_mcp --version
 The output is one line with the executable name followed by the package version:
 
 ```text
-hyena_dart 2.0.0
-hyena_mcp 2.0.0
+hyena_dart 3.0.0
+hyena_mcp 3.0.0
 ```
 
 The MCP version command does not require `--root`. This makes it safe to identify the project-resolved entry point before granting access to a project.
@@ -131,7 +131,7 @@ dart run hyena_dart complexity lib --threshold=15
 dart run hyena_dart complexity lib -f html -o complexity.html
 ```
 
-A non-integer or negative threshold is a usage error.
+A non-integer or negative threshold is a usage error (exit code 64).
 
 ## Baselines and source suppressions
 
@@ -165,4 +165,15 @@ The supported rules are `dead-code`, `complexity`, `cyclomatic-complexity`, `max
 
 Hyena returns exit code 0 after reporting findings by default. Pass `--fail-on=dead-code`, `--fail-on=complexity`, or `--fail-on=dead-code,complexity` to return exit code 1 when a selected, unsuppressed finding remains. This applies after baseline filtering.
 
-Invalid arguments, missing targets or config files, parse failures, and dead-code resolution failures remain operational errors. See [CI and automation](/docs/ci/) for complete examples.
+| Code | Meaning |
+| --- | --- |
+| `0` | Analysis completed. Findings never fail the run without `--fail-on`. |
+| `1` | Analysis completed and findings matched a `--fail-on` category. |
+| `2` | Tool error: a missing or invalid config or baseline file, a missing or unreadable target, an analysis failure that stops the whole run, a report write failure, or an unexpected internal error. |
+| `64` | Usage error: unknown command or flag, invalid option value, or conflicting options. |
+
+A tool error takes precedence over `--fail-on`. Before v3.0.0, tool errors exited `1`.
+
+A Dart file that fails to resolve, has analysis or syntax errors, or cannot be read is not a tool error. Hyena prints `Warning: skipped <path>: <reason>` to stderr, continues with the rest of the target, and keeps its normal exit code.
+
+`hyena_mcp` exits `64` for usage errors such as a missing `--root`, and `2` when it cannot start, such as a `--root` directory that does not exist. See [CI and automation](/docs/ci/#exit-codes) for complete examples.

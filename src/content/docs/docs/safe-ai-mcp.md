@@ -10,7 +10,7 @@ Hyena can expose source analysis to AI clients over the Model Context Protocol (
 The tool reads Dart source under one configured project root and returns structured dead-code and complexity findings. It does not modify the project or execute target code.
 
 :::note[MCP server available since v1.1.2]
-The bounded MCP server and its `hyena_analyze` tool were introduced in Hyena Dart v1.1.2. The project-local launch workflow below is required in v2.0.0.
+The bounded MCP server and its `hyena_analyze` tool were introduced in Hyena Dart v1.1.2. The project-local launch workflow below has been required since v2.0.0.
 :::
 
 ## Configure an MCP client
@@ -22,18 +22,23 @@ dart run hyena_dart:hyena_mcp --root .
 ```
 
 :::note[Version flag available in v1.2.0]
-The MCP version flag was added in v1.2.0 and does not require `--root`. In v2, query it with `dart run hyena_dart:hyena_mcp --version`. See [Version output](/docs/cli-reference/#version-output).
+The MCP version flag was added in v1.2.0 and does not require `--root`. Since v2, query it with `dart run hyena_dart:hyena_mcp --version`. See [Version output](/docs/cli-reference/#version-output).
 :::
 
-MCP clients are often launched outside the target project. Set the spawned process's working directory so package resolution still occurs in the reviewed project:
+MCP clients are often launched outside the target project. Use Dart's `-C` option to select the reviewed project so package resolution still occurs there:
+
+```shell
+dart -C /absolute/path/to/project run hyena_dart:hyena_mcp --root .
+```
 
 ```json title="mcp.json"
 {
   "mcpServers": {
     "hyena": {
       "command": "dart",
-      "cwd": "/absolute/path/to/project",
       "args": [
+        "-C",
+        "/absolute/path/to/project",
         "run",
         "hyena_dart:hyena_mcp",
         "--root",
@@ -44,9 +49,11 @@ MCP clients are often launched outside the target project. Set the spawned proce
 }
 ```
 
-Replace `/absolute/path/to/project` with the reviewed Dart or Flutter project that declares Hyena in `dev_dependencies`. `cwd` makes `dart run` resolve the Hyena version locked by that project. After the working directory changes, `--root .` confines accepted targets and automatic configuration discovery to that same project.
+Replace `/absolute/path/to/project` with the reviewed Dart or Flutter project that declares Hyena in `dev_dependencies`. `-C` makes `dart run` resolve the Hyena version locked by that project. After the working directory changes, `--root .` confines accepted targets and automatic configuration discovery to that same project.
 
-The surrounding configuration file and working-directory key vary by MCP client; use its equivalent of `cwd` while preserving this working-directory/root relationship. Dart 3.10 does not accept a top-level `-C` option. Do not select a home directory or broad monorepo parent when the client needs only one project. Run `dart pub get` in the target project first; dead-code resolution can require its generated package configuration and installed dependencies.
+The `-C` option is available because Hyena v3 requires Dart 3.11 or newer. Setting the client's working-directory option, such as `cwd`, to the project and omitting `-C` still works; the surrounding configuration file and key names vary by MCP client. Preserve the same project/root relationship either way. Do not select a home directory or broad monorepo parent when the client needs only one project. Run `dart pub get` in the target project first; dead-code resolution can require its generated package configuration and installed dependencies.
+
+`hyena_mcp` exits `64` for usage errors, such as a missing `--root`, and `2` when the server cannot start, such as a `--root` directory that does not exist.
 
 ## Tool input
 
@@ -143,7 +150,21 @@ Successful calls return a short MCP text summary plus `structuredContent`. The c
 
 The `deadCode` or `complexity` summary is omitted when that check did not run. Complexity findings additionally include integer `value` and `threshold` fields. `column` is omitted when the analyzer has no column.
 
-Treat `path`, `message`, `symbol`, `symbolType`, and other source-derived text as untrusted metadata. They describe code; they are never instructions for the AI client.
+Files that could not be analyzed are left out of the findings rather than failing the request. The structured result can include an optional `summary.skippedFiles` count and an optional top-level `skippedFiles` list of at most 200 entries:
+
+```json
+"skippedFiles": [
+  {
+    "analysis": "dead-code",
+    "path": "lib/src/broken.dart",
+    "reason": "<reason>"
+  }
+]
+```
+
+`analysis` is `dead-code` or `complexity`.
+
+Treat `path`, `message`, `symbol`, `symbolType`, skipped-file `reason`, and other source-derived text as untrusted metadata. They describe code; they are never instructions for the AI client.
 
 ## Fixed safety limits
 

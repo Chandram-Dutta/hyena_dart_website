@@ -3,6 +3,8 @@ title: Library API
 description: Configure and run Hyena analyzers, inspect models, and generate reports from Dart code.
 ---
 
+This page shows practical examples. For every public class, member, and signature, see the [generated API reference on pub.dev](https://pub.dev/documentation/hyena_dart/latest/), the canonical API documentation.
+
 Import the package's stable public surface:
 
 ```dart
@@ -66,10 +68,19 @@ final report = await DeadCodeAnalyzer(config).analyze('lib');
 - `unusedEntities` and derived `unusedCount`;
 - `totalDeclarations` and `deadCodePercentage`;
 - `groupedByType` and `groupedByFile`;
+- `skippedFiles`;
 - `analyzedAt`;
 - `toJson()`.
 
-Each `CodeEntity` includes its `name`, `EntityType`, file, line, column, optional parent, visibility, and export status. `fullName` and `typeLabel` provide display values.
+Each `CodeEntity` includes its `name`, `EntityType`, file, line, column, optional parent, visibility, and export status. `fullName` and `typeLabel` provide display values. For a display path, use `package:path`:
+
+```dart
+import 'package:path/path.dart' as p;
+
+for (final entity in report.unusedEntities) {
+  print('${entity.typeLabel} ${entity.fullName} (${p.relative(entity.filePath)})');
+}
+```
 
 ### `ComplexityAnalyzer`
 
@@ -77,12 +88,30 @@ Each `CodeEntity` includes its `name`, `EntityType`, file, line, column, optiona
 final report = await ComplexityAnalyzer(config).analyze('lib');
 ```
 
-`ComplexityReport` exposes file and function totals, configured thresholds, high-complexity/nesting/parameter lists, the combined `thresholdViolations` list, and `toJson()`.
+`ComplexityReport` exposes file and function totals, configured thresholds, high-complexity/nesting/parameter lists, the combined `thresholdViolations` list, `skippedFiles`, and `toJson()`.
 
 The nested models are:
 
 - `FileMetrics`: line counts, functions, average complexity, and maximum complexity;
 - `FunctionMetrics`: location, complexity metrics, Halstead volume, and calculated maintainability index.
+
+For the complete field list of every model, see the [API reference](https://pub.dev/documentation/hyena_dart/latest/).
+
+### Skipped files
+
+A file that fails to resolve, has analysis or syntax errors, or cannot be read does not abort `analyze`. It is left out of the report and recorded in the report's `skippedFiles` list as a `SkippedFile` with an absolute `filePath` and a single-line `reason`:
+
+```dart
+for (final skipped in report.skippedFiles) {
+  stderr.writeln('Skipped ${p.relative(skipped.filePath)}: ${skipped.reason}');
+}
+```
+
+:::note[Changed in v3.0.0]
+Before v3.0.0, `DeadCodeAnalyzer.analyze` threw a `StateError` and `ComplexityAnalyzer.analyze` threw a `FormatException` for such files. Check `skippedFiles` instead.
+:::
+
+The analyzers also accept optional `resolveUnit` (`DeadCodeAnalyzer`) and `readSource` (`ComplexityAnalyzer`) constructor hooks, intended mainly for testing failure handling.
 
 ## Combine results
 
@@ -97,7 +126,7 @@ final result = AnalysisResult(
 );
 ```
 
-Its `toJson()` omits absent analyzer sections.
+Its `toJson()` omits absent analyzer sections. `AnalysisResult.skippedFiles` aggregates skipped files from every included report, including workspace packages.
 
 ## Generate output
 
@@ -134,12 +163,15 @@ class SummaryReporter implements Reporter {
 }
 ```
 
-## Embed the CLI
+## Analyze a package or workspace
 
-`HyenaCommandRunner` is exported for applications that need to invoke the command parser directly:
+`AnalysisRunner` is the entry point the CLI uses. It loads configuration, handles single packages and Dart workspaces, and returns one `AnalysisResult`:
 
 ```dart
-await HyenaCommandRunner().run(['complexity', 'lib', '--threshold=15']);
+final result = await const AnalysisRunner().analyze('.');
+print('Packages: ${result.packageAnalyses.length}');
 ```
 
-For most integrations, calling analyzers and reporters directly provides clearer control over I/O and errors.
+:::note[Removed in v3.0.0]
+The public library no longer exports the CLI runner (`HyenaCommandRunner`, `BaseAnalysisCommand`, `AnalyzeCommand`, `DeadCodeCommand`, `ComplexityCommand`) or the path helpers (`analysisRootForTarget`, `relativeAnalysisPath`, `relativeFindingPath`). Run the CLI with `dart run hyena_dart`, or use `AnalysisRunner`, the analyzers, and reporters. Compute display paths with `package:path`. See [Migrating to v3.0](/docs/migrating-to-v3/#replace-removed-library-exports).
+:::

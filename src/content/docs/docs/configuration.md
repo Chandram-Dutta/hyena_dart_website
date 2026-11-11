@@ -9,8 +9,9 @@ Hyena reads configuration from either a dedicated `hyena.yaml` file or a `hyena:
 
 ```yaml title="hyena.yaml"
 hyena:
+  # Do not list *.g.dart, *.freezed.dart, or *.mocks.dart here:
+  # generated files are handled automatically.
   exclude:
-    - "**/*.g.dart"
     - "**/fixtures/**"
 
   complexity:
@@ -46,7 +47,7 @@ Threshold comparisons are strict: **metric > threshold**. Equality is not a viol
 
 ## Default dead-code policy
 
-With both `ignore_exports` and `ignore_private` set to `false`, v2 reports unreachable public and private declarations by default. This is intended for application projects, where public visibility does not necessarily mean that another package consumes the declaration.
+With both `ignore_exports` and `ignore_private` set to `false`, Hyena reports unreachable public and private declarations by default. This is intended for application projects, where public visibility does not necessarily mean that another package consumes the declaration.
 
 Reusable package authors can set `ignore_exports: true` when the exported public surface is intentionally consumed outside the analyzed project. For one run, both `analyze` and `dead-code` accept `--ignore-exports` and `--ignore-private`:
 
@@ -155,19 +156,23 @@ Hyena reads only its own key. Dart analyzer settings continue to work normally.
 
 ## Exclusion behavior
 
-Both analyzers recursively discover `*.dart` files and apply the same exclusions.
+Both analyzers recursively discover `*.dart` files. Custom patterns are checked first. Hyena then always excludes:
 
-Custom patterns are checked first. Hyena then always excludes:
-
-- file names ending in `.g.dart`;
-- file names ending in `.freezed.dart`;
-- file names ending in `.mocks.dart`;
 - any path with a segment exactly named `.dart_tool`;
 - any path with a segment exactly named `build`;
 - any path with a segment exactly named `generated`.
 
+### Generated files
+
+Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart` are handled automatically; do not list them in `exclude`.
+
+- **Dead-code analysis** counts references from generated files, including `part` files, so declarations used only by generated code stay reachable. Declarations inside generated files are never reported.
+- **Complexity analysis** skips generated files.
+
+A custom `exclude` pattern that matches a generated file still removes it from analysis entirely, including its references.
+
 :::caution
-Built-in exclusions cannot currently be disabled through configuration. If generated code participates in a reference chain, remember that it is outside the analysis graph.
+Built-in exclusions cannot currently be disabled through configuration. If code under a `generated`, `build`, or `.dart_tool` directory participates in a reference chain, remember that it is outside the analysis graph.
 :::
 
 Pattern matching uses the Dart `glob` package. Quote patterns in YAML so characters such as `*` are treated as string content.

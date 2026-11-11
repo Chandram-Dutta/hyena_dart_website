@@ -13,8 +13,9 @@ const mcpConfig = `{
   "mcpServers": {
     "hyena": {
       "command": "dart",
-      "cwd": "/absolute/path/to/project",
       "args": [
+        "-C",
+        "/absolute/path/to/project",
         "run",
         "hyena_dart:hyena_mcp",
         "--root",
@@ -49,7 +50,7 @@ const mcpCall = `hyena_analyze({
           </a>
         </div>
         <p class="version-note">
-          <a href="/docs/migrating-to-v2/">v2.0.0</a> · current release · Dart SDK 3.10.3+
+          <a href="/docs/migrating-to-v3/">v3.0.0</a> · current release · Dart SDK 3.11+
         </p>
       </div>
 
@@ -173,7 +174,7 @@ COMPLEXITY
         <article class="workflow-step">
           <span class="step-number">02 / Prepare</span>
           <h3>Resolve your package</h3>
-          <p>Dead-code analysis needs analyzer resolution for every included file.</p>
+          <p>Dead-code analysis resolves every included file; files that cannot be resolved are skipped with a warning.</p>
           <code>dart pub get</code>
         </article>
         <article class="workflow-step">
@@ -242,12 +243,13 @@ COMPLEXITY
             <h3>Predictable exclusions</h3>
             <p>
               Custom glob patterns apply on top of built-in exclusions for
-              generated outputs and build directories.
+              generated and build directories. Generated <code>.g.dart</code>,
+              <code>.freezed.dart</code>, and <code>.mocks.dart</code> files are
+              handled automatically: their references count, their declarations
+              are never reported.
             </p>
-            <ul class="tag-list" aria-label="Built-in excluded files">
-              <li>*.g.dart</li><li>*.freezed.dart</li>
-              <li>*.mocks.dart</li><li>generated/</li>
-              <li>.dart_tool/</li><li>build/</li>
+            <ul class="tag-list" aria-label="Built-in excluded directories">
+              <li>generated/</li><li>.dart_tool/</li><li>build/</li>
             </ul>
           </div>
         </article>
@@ -284,7 +286,7 @@ COMPLEXITY
         <article class="workflow-step">
           <span class="step-number">03 / CI</span>
           <h3>Fail on new findings</h3>
-          <p>Apply the baseline, then return exit code 1 only for the selected finding categories.</p>
+          <p>Apply the baseline, then exit 1 when new findings remain in the selected categories. Tool errors exit 2; usage errors exit 64.</p>
           <code>--fail-on=dead-code,complexity</code>
         </article>
       </div>
@@ -346,7 +348,7 @@ COMPLEXITY
       <ul class="reality-list">
         <li>
           <span class="check-mark" aria-hidden="true">01</span>
-          <span><strong>Resolve first.</strong> Dead-code analysis stops if an included Dart file has a resolution error.</span>
+          <span><strong>Resolve first.</strong> A Dart file that fails to resolve or parse is skipped with a <code>Warning: skipped</code> line on stderr, so run <code>dart pub get</code> and code generation before analysis.</span>
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">02</span>
@@ -354,7 +356,7 @@ COMPLEXITY
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">03</span>
-          <span><strong>Public code is checked by default in v2.</strong> Reusable packages can preserve exported APIs explicitly with <code>ignore_exports: true</code>.</span>
+          <span><strong>Public code is checked by default.</strong> Reusable packages can preserve exported APIs explicitly with <code>ignore_exports: true</code>.</span>
         </li>
         <li>
           <span class="check-mark" aria-hidden="true">04</span>
