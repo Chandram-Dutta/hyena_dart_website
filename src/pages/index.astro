@@ -2,304 +2,32 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const title = 'Hyena Dart — dead-code and complexity analysis';
-const description =
-  'Find unused declarations and measure complexity in Dart and Flutter projects through a configurable CLI or bounded read-only MCP tool.';
-const mcpConfig = `{
-  "mcpServers": {
-    "hyena": {
-      "command": "dart",
-      "args": [
-        "-C",
-        "/absolute/path/to/project",
-        "run",
-        "hyena_dart:hyena_mcp",
-        "--root",
-        "."
-      ]
-    }
-  }
-}`;
-const mcpCall = `hyena_analyze({
-  "path": "lib",
-  "checks": "both"
-})`;
+const description = 'Dead-code and complexity analysis for Dart and Flutter.';
 ---
 
 <BaseLayout {title} {description}>
   <section class="hero">
     <div class="shell">
-      <p class="label">Static analysis for Dart + Flutter</p>
-      <h1>Find unused code. Measure the hard parts.</h1>
+      <h1>Hyena Dart</h1>
       <p class="hero-lede">
-        Hyena resolves your Dart AST to trace declaration reachability, then
-        measures function-level complexity. Run it from the terminal, emit a
-        report, or call the analyzers from Dart.
+        Dead-code and complexity analysis for Dart and Flutter.
       </p>
       <div class="hero-actions">
-        <a href="/docs/getting-started/">Run your first analysis <span aria-hidden="true">→</span></a>
-        <a href="/docs/">Read the docs</a>
+        <a href="/docs/getting-started/">Get started <span aria-hidden="true">→</span></a>
+        <a href="/docs/">Docs</a>
+      </div>
+      <div class="quick-command">
+        <code>dart pub add dev:hyena_dart</code>
+        <button
+          class="copy-button"
+          type="button"
+          data-copy="dart pub add dev:hyena_dart"
+          aria-label="Copy install command"
+        >Copy</button>
       </div>
       <p class="version-note">
-        <a href="/docs/migrating-to-v3/">v3.0.0</a> · current release · Dart SDK 3.11+
+        <a href="/docs/migrating-to-v3/">v3.0.0</a> · Dart SDK 3.11+
       </p>
-
-      <figure aria-label="Example Hyena report">
-        <figcaption>hyena / report</figcaption>
-        <pre><code><span class="prompt">$</span> dart run hyena_dart analyze lib --no-color
-
-HYENA CODE ANALYSIS REPORT
-────────────────────────────────
-<span class="dim">Target:</span> lib
-
-DEAD CODE
-<span class="dim">Total declarations:</span> 204
-<span class="dim">Unused entities:</span>     <span class="success">0</span>
-<span class="success">✓ No dead code detected</span>
-
-COMPLEXITY
-<span class="dim">Files:</span>                 17
-<span class="dim">Functions:</span>             251
-<span class="dim">Threshold violations:</span> <span class="warning">5</span></code></pre>
-        <div class="quick-command">
-          <code>dart pub add dev:hyena_dart</code>
-          <button
-            class="copy-button"
-            type="button"
-            data-copy="dart pub add dev:hyena_dart"
-            aria-label="Copy install command"
-          >Copy</button>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <section class="block" id="safe-ai-mcp">
-    <div class="shell">
-      <p class="label">Safe AI / MCP</p>
-      <p class="label">Introduced in v1.1.2</p>
-      <h2>One bounded tool for AI-assisted review.</h2>
-      <p>
-        Run <code>hyena_dart:hyena_mcp</code> from the project that pins
-        Hyena. <code>--root .</code> confines its one read-only tool to that
-        project and relative Dart targets.
-      </p>
-      <ul class="facts" aria-label="MCP integration properties">
-        <li>
-          <strong>One analysis surface.</strong>
-          <span><code>hyena_analyze(path, checks)</code> returns schema-versioned findings.</span>
-        </li>
-        <li>
-          <strong>No execution path.</strong>
-          <span>No HTTP server, shell, target execution, writes, fixes, or outbound network code.</span>
-        </li>
-        <li>
-          <strong>Bounded, not sandboxed.</strong>
-          <span>Path checks and hard limits apply; untrusted workspaces still need OS isolation.</span>
-        </li>
-      </ul>
-      <div class="link-row first-spaced">
-        <a href="/docs/safe-ai-mcp/">Configure Safe AI / MCP <span aria-hidden="true">→</span></a>
-      </div>
-
-      <figure class="spaced">
-        <figcaption>
-          <span>mcp.json</span> <span>stdio</span>
-        </figcaption>
-        <pre><code>{mcpConfig}</code></pre>
-        <div class="mcp-request">
-          <span>tool call</span>
-          <code>{mcpCall}</code>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">The short path</p>
-      <h2>From install to report in three commands.</h2>
-      <p>
-        Use the defaults first. Add a config only when generated files,
-        reusable public APIs, or your team's complexity limits need different
-        treatment.
-      </p>
-      <div class="stack">
-        <article>
-          <span class="step-number">01 / Install</span>
-          <h3>Pin it to the project</h3>
-          <p>Add Hyena as a development dependency so local and CI runs use the same version.</p>
-          <code class="cmd">dart pub add dev:hyena_dart</code>
-        </article>
-        <article>
-          <span class="step-number">02 / Prepare</span>
-          <h3>Resolve your package</h3>
-          <p>Dead-code analysis resolves every included file; files that cannot be resolved are skipped with a warning.</p>
-          <code class="cmd">dart pub get</code>
-        </article>
-        <article>
-          <span class="step-number">03 / Analyze</span>
-          <h3>Choose a file or directory</h3>
-          <p>Analyze the package, a subdirectory, or one Dart file while iterating.</p>
-          <code class="cmd">dart run hyena_dart analyze .</code>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">Analysis surface</p>
-      <h2>Two passes, one report.</h2>
-      <p>
-        Dead-code analysis follows resolved references from roots. Complexity
-        analysis parses each function, method, constructor, and closure into
-        a small set of reviewable metrics.
-      </p>
-      <div class="link-row first-spaced">
-        <a href="/docs/analysis/dead-code/">How analysis works <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="stack">
-        <article>
-          <h3>Reachability-based dead code</h3>
-          <p>
-            Reports declarations that cannot be reached from entry points,
-            inherited implementations, top-level references, and configured roots.
-          </p>
-          <ul class="tag-list" aria-label="Supported dead-code entities">
-            <li>classes</li><li>mixins</li><li>extensions</li>
-            <li>enums</li><li>constructors</li><li>methods</li>
-            <li>fields</li><li>typedefs</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Function-level complexity</h3>
-          <p>
-            Measures control-flow paths, nesting, parameters, physical LOC,
-            Halstead volume, and a normalized maintainability index.
-          </p>
-          <ul class="tag-list" aria-label="Complexity metrics">
-            <li>cyclomatic</li><li>nesting</li><li>parameters</li>
-            <li>LOC</li><li>Halstead</li><li>MI</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Predictable exclusions</h3>
-          <p>
-            Custom glob patterns apply on top of built-in exclusions for
-            generated and build directories. Generated <code>.g.dart</code>,
-            <code>.freezed.dart</code>, and <code>.mocks.dart</code> files are
-            handled automatically: their references count, their declarations
-            are never reported.
-          </p>
-          <ul class="tag-list" aria-label="Built-in excluded directories">
-            <li>generated/</li><li>.dart_tool/</li><li>build/</li>
-          </ul>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">Adoption controls</p>
-      <h2>Keep exceptions explicit. Gate only what is new.</h2>
-      <p>
-        Source suppressions and a versioned baseline are applied before
-        reporting and exit-code policy, so existing debt does not need a
-        broad exclusion.
-      </p>
-      <div class="stack">
-        <article>
-          <span class="step-number">01 / Source</span>
-          <h3>Suppress one declaration</h3>
-          <p>Keep an intentional exception next to the code and scope it to a declaration or rule.</p>
-          <code class="cmd">// hyena:ignore dead-code</code>
-        </article>
-        <article>
-          <span class="step-number">02 / Baseline</span>
-          <h3>Record accepted findings</h3>
-          <p>Commit stable, line-independent fingerprints for findings the project accepts today.</p>
-          <code class="cmd">--write-baseline=hyena-baseline.json</code>
-        </article>
-        <article>
-          <span class="step-number">03 / CI</span>
-          <h3>Fail on new findings</h3>
-          <p>Apply the baseline, then exit 1 when new findings remain in the selected categories. Tool errors exit 2; usage errors exit 64.</p>
-          <code class="cmd">--fail-on=dead-code,complexity</code>
-        </article>
-      </div>
-      <div class="link-row">
-        <a href="/docs/ci/">See baseline and CI examples <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">Output</p>
-      <h2>Read it now or pass it on.</h2>
-      <p>
-        Every command can write to stdout or a file. The selected reporter
-        changes presentation, not the analysis itself.
-      </p>
-      <div class="output-grid">
-        <article>
-          <span class="table-label">Default</span>
-          <h3>Console</h3>
-          <p>Compact summaries and the first 20 findings, with optional ANSI color.</p>
-        </article>
-        <article>
-          <span class="table-label">Automation</span>
-          <h3>JSON + SARIF</h3>
-          <p>Structured metrics for custom policies and SARIF 2.1 for code-scanning systems.</p>
-        </article>
-        <article>
-          <span class="table-label">Review</span>
-          <h3>Markdown</h3>
-          <p>Tables and collapsible file sections that fit issue and pull-request workflows.</p>
-        </article>
-        <article>
-          <span class="table-label">Share</span>
-          <h3>HTML</h3>
-          <p>A standalone report with summary cards and detailed violation tables.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">Operational notes</p>
-      <h2>Know what the result means.</h2>
-      <p>
-        Hyena is a focused analyzer, not a replacement for the Dart compiler,
-        lints, tests, or runtime coverage.
-      </p>
-      <ul class="notes">
-        <li>
-          <span class="index" aria-hidden="true">01</span><span><strong>Resolve first.</strong> A Dart file that fails to resolve or parse is skipped with a <code>Warning: skipped</code> line on stderr, so run <code>dart pub get</code> and code generation before analysis.</span>
-        </li>
-        <li>
-          <span class="index" aria-hidden="true">02</span><span><strong>Thresholds are strict.</strong> A value equal to its configured limit is allowed; only greater values are violations.</span>
-        </li>
-        <li>
-          <span class="index" aria-hidden="true">03</span><span><strong>Public code is checked by default.</strong> Reusable packages can preserve exported APIs explicitly with <code>ignore_exports: true</code>.</span>
-        </li>
-        <li>
-          <span class="index" aria-hidden="true">04</span><span><strong>Dynamic dispatch stays conservative.</strong> Unresolved dynamic calls retain same-named members when the runtime target cannot be proven.</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="shell">
-      <p class="label">Documentation</p>
-      <h2>Start with the defaults. Tune with evidence.</h2>
-      <div class="link-row first-spaced">
-        <a href="/docs/getting-started/">Getting started</a>
-        <a href="/docs/configuration/">Configuration</a>
-      </div>
     </div>
   </section>
 </BaseLayout>
