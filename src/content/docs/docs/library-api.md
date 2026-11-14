@@ -99,13 +99,15 @@ For the complete field list of every model, see the [API reference](https://pub.
 
 ### Skipped files
 
-A file that fails to resolve, has analysis or syntax errors, or cannot be read does not abort `analyze`. It is left out of the report and recorded in the report's `skippedFiles` list as a `SkippedFile` with an absolute `filePath` and a single-line `reason`:
+Dead-code analysis records non-generated files with resolution failures, ERROR diagnostics, or visitor failures in `skippedFiles`. Complexity analysis records read failures, syntax errors, and visitor failures. Each entry is a `SkippedFile` with an absolute `filePath` and a single-line `reason`:
 
 ```dart
 for (final skipped in report.skippedFiles) {
   stderr.writeln('Skipped ${p.relative(skipped.filePath)}: ${skipped.reason}');
 }
 ```
+
+Missing references can cause dead-code findings, and generated resolution failures are absent from `skippedFiles`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 
 :::note[Changed in v3.0.0]
 Before v3.0.0, `DeadCodeAnalyzer.analyze` threw a `StateError` and `ComplexityAnalyzer.analyze` threw a `FormatException` for such files. Check `skippedFiles` instead.

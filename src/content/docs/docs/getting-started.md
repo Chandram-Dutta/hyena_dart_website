@@ -112,7 +112,7 @@ dart run hyena_dart analyze lib \
 
 - A threshold is violated only when a metric is **greater than** its limit. A cyclomatic score of 20 does not violate the default threshold of 20.
 - The CLI returns 0 for findings by default. Use `--fail-on` to select which finding categories should return exit code 1. Exit code 2 means Hyena could not finish. See [CI and automation](/docs/ci/#exit-codes).
-- A file that cannot be resolved or parsed is skipped with a `Warning: skipped <path>: <reason>` line on stderr; the rest of the target is still analyzed.
+- A non-generated file that cannot be resolved or parsed is skipped with a `Warning: skipped <path>: <reason>` line on stderr; the rest of the target is still analyzed. Generated resolution failures are silent, and missing references can cause dead-code findings elsewhere; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 - Unused public and private declarations are both reported by default. Reusable package authors can preserve exported public API with `ignore_exports: true` or `--ignore-exports`.
 - Dead-code findings are static reachability results. Reflection, generated registration, and behavior outside the scanned source can require exclusions or manual review.
 

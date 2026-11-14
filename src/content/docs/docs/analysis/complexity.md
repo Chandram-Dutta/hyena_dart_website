@@ -13,8 +13,8 @@ Each `FunctionMetrics` record contains:
 
 | Field | Meaning |
 | --- | --- |
-| `name` | Function name, `Class.method`, `Class.new`, named constructor, or `<closure@line:column>`. |
-| `filePath` / `line` | Project-relative source location, or workspace-relative location for a workspace. |
+| `name` / `fullName` | Simple name / owner-qualified display name, such as `method` / `Class.method` or `new` / `Class.new`; closure names use `<closure@line:column>`. |
+| `filePath` / `line` | Absolute file path and one-based line. Reporters render project- or workspace-relative paths. |
 | `cyclomaticComplexity` | Base path plus counted branch points. |
 | `linesOfCode` | Unique non-blank physical lines in the executable body and constructor initializers. |
 | `maxNestingLevel` | Deepest counted control structure. |
@@ -105,7 +105,7 @@ Defaults:
 | Maximum nesting | 5 |
 | Parameters | 6 |
 
-A function is in `thresholdViolations` if **any** metric is strictly greater than its limit. Equal values pass. Violations are sorted by descending cyclomatic complexity.
+A function is in `thresholdViolations` if any unsuppressed threshold metric is strictly greater than its limit. Equal values pass. Violations are sorted by descending cyclomatic complexity.
 
 Configure all limits in YAML or override only cyclomatic complexity on the dedicated command:
 

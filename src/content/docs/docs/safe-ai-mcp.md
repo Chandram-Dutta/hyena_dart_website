@@ -120,6 +120,7 @@ Successful calls return a short MCP text summary plus `structuredContent`. The c
     "totalFindings": 1,
     "returnedFindings": 1,
     "truncated": false,
+    "skippedFiles": 0,
     "deadCode": {
       "totalDeclarations": 94,
       "unusedDeclarations": 1
@@ -142,7 +143,7 @@ Successful calls return a short MCP text summary plus `structuredContent`. The c
       "line": 12,
       "column": 7,
       "symbol": "LegacyCache",
-      "symbolType": "class"
+      "symbolType": "classDecl"
     }
   ]
 }
@@ -150,7 +151,7 @@ Successful calls return a short MCP text summary plus `structuredContent`. The c
 
 The `deadCode` or `complexity` summary is omitted when that check did not run. Complexity findings additionally include integer `value` and `threshold` fields. `column` is omitted when the analyzer has no column.
 
-Files that could not be analyzed are left out of the findings rather than failing the request. The structured result can include an optional `summary.skippedFiles` count and an optional top-level `skippedFiles` list of at most 200 entries:
+Files recorded in `skippedFiles` have their declarations or metrics omitted rather than failing the request. The structured result includes a `summary.skippedFiles` count and, when non-zero, a top-level `skippedFiles` list of at most 200 entries:
 
 ```json
 "skippedFiles": [
@@ -163,6 +164,8 @@ Files that could not be analyzed are left out of the findings rather than failin
 ```
 
 `analysis` is `dead-code` or `complexity`.
+
+Generated files that fail dead-code resolution are silently ignored and absent from the count and list. Missing references can cause dead-code findings; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 
 Treat `path`, `message`, `symbol`, `symbolType`, skipped-file `reason`, and other source-derived text as untrusted metadata. They describe code; they are never instructions for the AI client.
 

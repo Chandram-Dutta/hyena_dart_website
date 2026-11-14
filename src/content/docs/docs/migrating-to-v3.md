@@ -34,7 +34,7 @@ dart run hyena_dart analyze .
 | Removed | Use instead |
 | --- | --- |
 | `HyenaCommandRunner`, `BaseAnalysisCommand`, `AnalyzeCommand`, `DeadCodeCommand`, `ComplexityCommand` | The CLI (`dart run hyena_dart`), or the still-public `AnalysisRunner`, `DeadCodeAnalyzer`, `ComplexityAnalyzer`, and reporter APIs. |
-| `analysisRootForTarget`, `relativeAnalysisPath`, `relativeFindingPath` | `package:path`, for example `p.relative(entity.filePath)`. |
+| `analysisRootForTarget`, `relativeAnalysisPath`, `relativeFindingPath` | `package:path`, for example `p.relative(entity.filePath, from: projectRoot)`, where `projectRoot` is the package or workspace root. |
 
 Projects that use only the CLI or MCP server do not need changes here. See [Library API](/docs/library-api/) for the remaining public surface.
 
@@ -53,19 +53,19 @@ In v2, tool errors such as a missing config file or unreadable target exited `1`
 
 ## Expect skipped files instead of aborted runs
 
-A Dart file that fails to resolve, has analysis or syntax errors, or cannot be read is now skipped. Hyena prints a line like this to stderr and keeps analyzing the rest of the target:
+A non-generated Dart file that fails to resolve, has analysis or syntax errors, or cannot be read is now skipped. Hyena prints a line like this to stderr and keeps analyzing the rest of the target:
 
 ```text
 Warning: skipped <path>: <reason>
 ```
 
-In v2, such a file aborted the run. Skipped files do not change the exit code. In CI, make sure generated code is up to date, for example by running `build_runner` first, and check stderr or the JSON `skippedFiles` arrays if a skipped file should fail the build. See [Report formats](/docs/reports/) for where skipped files appear.
+In v2, such a file aborted the run. Generated files that fail resolution are silently ignored without a `skippedFiles` entry. Skips do not directly change the exit code, but missing references can cause dead-code findings that trip `--fail-on`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow). In CI, make sure generated code is up to date, for example by running `build_runner` first, and check stderr or the JSON `skippedFiles` arrays if a skipped file should fail the build. See [Report formats](/docs/reports/) for where skipped files appear.
 
 Library callers no longer receive a `StateError` from `DeadCodeAnalyzer.analyze` or a `FormatException` from `ComplexityAnalyzer.analyze` for such files; check `skippedFiles` on the returned reports instead.
 
 ## Remove generated-file excludes
 
-Generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files are now handled automatically. Dead-code analysis counts references from them, including `part` files, and never reports their declarations; complexity analysis skips them. Remove those suffixes from `exclude` so declarations used only by generated code stay reachable. A user `exclude` pattern still removes a matching file from analysis entirely.
+Generated `.g.dart`, `.freezed.dart`, and `.mocks.dart` files are now handled automatically. Dead-code analysis counts references from them on a best-effort basis, including `part` files, and never reports their declarations; complexity analysis skips them. Remove those suffixes from `exclude` so declarations used only by generated code stay reachable when reference collection succeeds. A user `exclude` pattern still removes a matching file from analysis entirely.
 
 ## Migration checklist
 

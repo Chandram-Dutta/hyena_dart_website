@@ -16,11 +16,11 @@ The dead-code analyzer resolves Dart syntax to analyzer elements, records declar
 7. Traverse the graph from all roots.
 8. Report declarations not in the reachable set.
 
-A file that fails to resolve, has analysis or syntax errors, or cannot be read is skipped. The CLI prints `Warning: skipped <path>: <reason>` to stderr and continues with the rest of the target; the exit code is unchanged. Declarations in a skipped file are not reported, and code that a resolvable-but-erroneous file references is still treated as used, so skipping it does not create false positives elsewhere. Run `dart pub get`, and any code generation, in the target package before analysis.
+Non-generated files that fail resolution, have ERROR diagnostics, cannot be read, or throw during visitor analysis are skipped with `Warning: skipped <path>: <reason>` on stderr. Their declarations are omitted. Resolvable files with ERROR diagnostics preserve references on a best-effort pass; unresolved or unreadable files and visitor failures contribute none, so code used only by them can be reported as dead. Generated files that fail resolution are silently ignored without a warning or `skippedFiles` entry and contribute no references. Skips do not directly change the exit code, but resulting findings can trip `--fail-on`. Run `dart pub get`, and any code generation, before analysis.
 
 ## Generated files
 
-Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart`, including `part` files, contribute references but are never reported. Declarations used only by generated code, such as helpers called from a generated `fromJson` function, private freezed constructors, or interfaces implemented by mocks, therefore stay reachable. A stale generated file with errors is ignored rather than aborting the run. A custom `exclude` pattern that matches a generated file removes it, and its references, from analysis.
+Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart`, including `part` files, contribute references but are never reported. Declarations used only by generated code, such as helpers called from a generated `fromJson` function, private freezed constructors, or interfaces implemented by mocks, therefore stay reachable when reference collection succeeds. Generated files that resolve are visited even with ERROR diagnostics; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow) for resolution failures. A custom `exclude` pattern that matches a generated file removes it, and its references, from analysis.
 
 ## Recorded declarations
 
@@ -40,7 +40,7 @@ References outside a recorded declaration are roots. Hyena also roots:
 - the top-level `main` function;
 - members that implement an inherited interface member, whether or not they have an `@override` annotation;
 - public declarations in directly importable package libraries, library parts, and explicit exports when `ignore_exports` is enabled;
-- declarations exposed by any branch of a conditional import or export;
+- public declarations exposed by any branch of a conditional import;
 - private declarations when `ignore_private` is enabled.
 
 References inside a root or another reachable declaration make their target declarations reachable. This avoids treating a helper as used merely because another unreachable helper calls it.

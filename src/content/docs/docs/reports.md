@@ -11,11 +11,11 @@ dart run hyena_dart analyze lib --format=json --output=hyena-report.json
 
 Without `--output`, the generated content is printed to stdout.
 
-When `--baseline` is present, baseline-matched findings are removed before any reporter runs. Every format therefore shows only current, unsuppressed findings.
+When `--baseline` is present, matched dead-code entries are removed and matched complexity rules are suppressed before reporting. Violation lists omit suppressed rules; JSON retains complexity metrics and identifies suppressed rules in `suppressedRules`.
 
 ## Path basis
 
-Every user-facing target and source path is relative to the package root, or to the common workspace root for workspace analysis. This applies to console, JSON, Markdown, HTML, SARIF, baselines, and MCP.
+Console, JSON, Markdown, HTML, SARIF, and baseline paths are relative to the package root, or to the common workspace root for workspace analysis. Without a `pubspec.yaml` ancestor, they use the target directory or a file target's parent. MCP paths are relative to its configured `--root`.
 
 - `dart run hyena_dart analyze lib` reports `lib/src/cache.dart`.
 - An analysis of the single file `lib/src/cache.dart` still reports `lib/src/cache.dart`.
@@ -29,7 +29,7 @@ The default reporter is intended for interactive runs. It prints target and dura
 
 - Dead-code findings are grouped by entity type and limited to the first 20 in each group.
 - Complexity output shows up to 20 threshold violations.
-- Files that could not be analyzed are listed with their reasons in the dead-code and complexity sections.
+- Reported skips are listed with their reasons in the dead-code and complexity sections.
 - `--no-color` removes ANSI styling.
 
 Use another format when truncation is undesirable.
@@ -69,9 +69,9 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
       "maxParameters": 6
     },
     "summary": {
-      "totalFiles": 17,
-      "totalFunctions": 133,
-      "totalLines": 2400,
+      "totalFiles": 1,
+      "totalFunctions": 1,
+      "totalLines": 120,
       "highComplexityFunctions": 1,
       "highNestingFunctions": 0,
       "highParameterFunctions": 0,
@@ -84,7 +84,7 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
         "codeLines": 94,
         "commentLines": 12,
         "blankLines": 14,
-        "averageCyclomaticComplexity": "4.25",
+        "averageCyclomaticComplexity": "23.00",
         "maxCyclomaticComplexity": 23,
         "functions": [
           {
@@ -96,7 +96,7 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
             "maxNestingLevel": 4,
             "parameterCount": 2,
             "halsteadVolume": "492.34",
-            "maintainabilityIndex": "43.18"
+            "maintainabilityIndex": "41.38"
           }
         ]
       }
@@ -111,7 +111,7 @@ JSON is the stable choice for scripts and CI. A combined report has this shape:
 }
 ```
 
-Both the `deadCode` and `complexity` sections include a `skippedFiles` array of files that could not be analyzed, each with a `filePath` and a single-line `reason`. The array is empty when nothing was skipped. Markdown, HTML, and SARIF reports do not currently include skipped files; use console or JSON output, or the CLI's `Warning: skipped` lines on stderr.
+Both the `deadCode` and `complexity` sections include a `skippedFiles` array of reported skips, each with a `filePath` and a single-line `reason`. Generated files that fail dead-code resolution are silently ignored and absent from these arrays. Missing references can cause dead-code findings even with an empty array; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow). Markdown, HTML, and SARIF reports do not currently include skipped files; use console or JSON output, or the CLI's `Warning: skipped` lines on stderr.
 
 Numeric-looking percentages, durations, averages, Halstead volume, and maintainability values are encoded as strings. Counts and thresholds are integers.
 
@@ -122,7 +122,7 @@ When a command runs only one analyzer, the other top-level key is absent rather 
 Markdown is suited to pull-request comments, issue attachments, and checked-in snapshots.
 
 - Dead-code sections contain complete tables grouped by entity type.
-- Complexity sections include summary counts, every threshold violation, and collapsible summaries for all files.
+- Complexity sections include summary counts and, when unsuppressed threshold violations remain, every violation and collapsible summaries for all analyzed files.
 
 ```shell
 dart run hyena_dart dead-code lib -f markdown -o dead-code.md
@@ -146,7 +146,7 @@ Package-scoped Dart workspace reporting is included in Hyena Dart 1.2.0 and late
 
 For a target root that declares `workspace`, console, JSON, Markdown, and HTML preserve a separate result section for the root package and each member. Workspace JSON adds `workspace.packageCount` and a `packages` array. Every package section still uses paths relative to the common workspace root.
 
-SARIF locations, baseline fingerprint paths, and MCP finding paths also use the common workspace root. See [Workspaces and monorepos](/docs/workspaces/#package-scoped-reports) for boundary and configuration behavior.
+SARIF locations and baseline fingerprint paths also use the common workspace root. MCP finding paths use its configured `--root`. See [Workspaces and monorepos](/docs/workspaces/#package-scoped-reports) for boundary and configuration behavior.
 
 ## SARIF
 
@@ -156,7 +156,7 @@ SARIF 2.1 is intended for code-scanning systems and editor integrations. Hyena e
 dart run hyena_dart analyze . --format=sarif --output=hyena.sarif
 ```
 
-The output is one SARIF run whose driver is `hyena_dart`. Locations are project-relative for a package and workspace-relative for a workspace. Use `--baseline` to omit accepted findings before uploading the file.
+The output is one SARIF run whose driver name is `Hyena Dart`. Locations are project-relative for a package and workspace-relative for a workspace. Use `--baseline` to omit accepted findings before uploading the file.
 
 ## Programmatic reporters
 
