@@ -40,7 +40,7 @@ References outside a recorded declaration are roots. Hyena also roots:
 - the top-level `main` function;
 - members that implement an inherited interface member, whether or not they have an `@override` annotation;
 - public declarations in directly importable package libraries, library parts, and explicit exports when `ignore_exports` is enabled;
-- public declarations exposed by any branch of a conditional import;
+- public declarations in any branch library of a conditional import, including its parts (declarations that branch only re-exports from another library are not rooted);
 - private declarations when `ignore_private` is enabled.
 
 References inside a root or another reachable declaration make their target declarations reachable. This avoids treating a helper as used merely because another unreachable helper calls it.

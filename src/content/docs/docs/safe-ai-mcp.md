@@ -151,7 +151,7 @@ Successful calls return a short MCP text summary plus `structuredContent`. The c
 
 The `deadCode` or `complexity` summary is omitted when that check did not run. Complexity findings additionally include integer `value` and `threshold` fields. `column` is omitted when the analyzer has no column.
 
-Files recorded in `skippedFiles` have their declarations or metrics omitted rather than failing the request. The structured result includes a `summary.skippedFiles` count and, when non-zero, a top-level `skippedFiles` list of at most 200 entries:
+Files recorded in `skippedFiles` have their declarations or metrics omitted rather than failing the request. The structured result includes a `summary.skippedFiles` count of skip entries (a file skipped by both checks counts twice) and, when non-zero, a top-level `skippedFiles` list of at most 200 entries:
 
 ```json
 "skippedFiles": [

@@ -66,7 +66,7 @@ Create `hyena.yaml` in the package root:
 hyena:
   exclude:
     - "**/fixtures/**"
-    - "lib/src/platform/**"
+    - "**/src/platform/**"
 
   complexity:
     cyclomatic_threshold: 15

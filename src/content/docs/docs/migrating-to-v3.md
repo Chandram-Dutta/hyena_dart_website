@@ -34,7 +34,7 @@ dart run hyena_dart analyze .
 | Removed | Use instead |
 | --- | --- |
 | `HyenaCommandRunner`, `BaseAnalysisCommand`, `AnalyzeCommand`, `DeadCodeCommand`, `ComplexityCommand` | The CLI (`dart run hyena_dart`), or the still-public `AnalysisRunner`, `DeadCodeAnalyzer`, `ComplexityAnalyzer`, and reporter APIs. |
-| `analysisRootForTarget`, `relativeAnalysisPath`, `relativeFindingPath` | `package:path`, for example `p.relative(entity.filePath, from: projectRoot)`, where `projectRoot` is the package or workspace root. |
+| `analysisRootForTarget`, `relativeAnalysisPath`, `relativeFindingPath` | `package:path`, for example `p.relative(entity.filePath, from: projectRoot)`, where `projectRoot` is the package or workspace root. `p.relative` uses native separators; to match the `/`-separated report paths on Windows, use `p.posix.joinAll(p.split(p.relative(entity.filePath, from: projectRoot)))`. |
 
 Projects that use only the CLI or MCP server do not need changes here. See [Library API](/docs/library-api/) for the remaining public surface.
 
