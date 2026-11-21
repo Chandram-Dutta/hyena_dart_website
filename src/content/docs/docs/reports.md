@@ -11,7 +11,7 @@ dart run hyena_dart analyze lib --format=json --output=hyena-report.json
 
 Without `--output`, the generated content is printed to stdout.
 
-When `--baseline` is present, matched dead-code entries are removed and matched complexity rules are suppressed before reporting. Violation lists include only functions with at least one unsuppressed rule. Console, Markdown, and HTML still show every metric for those functions without marking which rules are suppressed; JSON retains complexity metrics and identifies suppressed rules in `suppressedRules`.
+When `--baseline` is present, matched dead-code entries are removed and matched complexity rules are suppressed before reporting. Violation lists include only functions with at least one unsuppressed rule. Console, Markdown, and HTML still show those functions' metrics, including values for suppressed rules, without marking which rules are suppressed; JSON retains complexity metrics and identifies suppressed rules in `suppressedRules`.
 
 ## Path basis
 
