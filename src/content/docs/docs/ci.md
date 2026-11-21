@@ -50,13 +50,15 @@ Before v3.0.0, tool errors exited `1`, the same code as findings. Exit `1` now m
 
 ## Skipped files
 
-Individual files that fail to resolve, contain analysis or syntax errors, or can't be read are not tool errors. Hyena skips them, prints a line to stderr, and keeps analyzing the rest of the target:
+Non-generated files that cannot be analyzed are skipped with a warning on stderr:
 
 ```text
 Warning: skipped <path>: <reason>
 ```
 
-Skipped files do not change the exit code. They are listed in the console report and under `skippedFiles` in JSON output; Markdown, HTML, and SARIF reports do not include them. See [Report formats](/docs/reports/).
+Skips do not directly change the exit code, but missing references can cause dead-code findings that trip `--fail-on`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow). Generated files that fail dead-code resolution are silently ignored without a warning or `skippedFiles` entry.
+
+Reported skips are listed in the console report and under `skippedFiles` in JSON output; Markdown, HTML, and SARIF reports do not include them. See [Report formats](/docs/reports/).
 
 In CI, make sure generated code is up to date before analysis, for example by running `build_runner` first. If a skipped file should fail the build, check stderr or the JSON `skippedFiles` arrays.
 

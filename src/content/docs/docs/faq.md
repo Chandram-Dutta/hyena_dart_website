@@ -25,10 +25,10 @@ Both lists are empty by default. Add only entry mechanisms a router, DI system, 
 
 No. Files ending in `.g.dart`, `.freezed.dart`, or `.mocks.dart`, including `part` files, are handled automatically:
 
-- **Dead-code analysis** collects references from them, so declarations used only by generated code stay reachable, and never reports their own declarations.
+- **Dead-code analysis** collects references from them, so declarations used only by generated code stay reachable when reference collection succeeds, and never reports their own declarations.
 - **Complexity analysis** skips them.
 
-A stale or broken generated file does not abort the run.
+Generated files that fail resolution are silently ignored and can leave code used only by them reported as dead; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 
 Do not list those suffixes in `exclude` unless you want the files removed entirely. A matching `exclude` pattern removes a generated file from analysis, including its references. Paths with a `.dart_tool`, `build`, or `generated` directory segment are still always excluded. See [Generated files](/docs/configuration/#generated-files) and [dead-code generated files](/docs/analysis/dead-code/#generated-files).
 
@@ -80,4 +80,4 @@ dart pub get
 dart run hyena_dart analyze .
 ```
 
-A file that still fails to resolve, has analysis or syntax errors, or cannot be read is skipped with `Warning: skipped <path>: <reason>` on stderr. Skipped files do not fail the run, but skipping is not a substitute for resolving the package: a skipped file's declarations are not checked. See [Prepare the target](/docs/installation/#prepare-the-target) and [Skipped files](/docs/ci/#skipped-files).
+Non-generated files that cannot be analyzed are skipped with `Warning: skipped <path>: <reason>` on stderr. Skipping is not a substitute for resolving the package: a skipped file's declarations are not checked. Missing references can cause dead-code findings that trip `--fail-on`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow), [Prepare the target](/docs/installation/#prepare-the-target), and [Skipped files](/docs/ci/#skipped-files).

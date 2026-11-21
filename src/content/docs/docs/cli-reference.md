@@ -35,7 +35,7 @@ The MCP version command does not require `--root`. This makes it safe to identif
 
 Hyena's release checks compare the runtime version with `pubspec.yaml` during CI and again before publication. A mismatch stops the release, so a published executable should not report a version different from its package.
 
-The first positional value is a Dart file or directory target. It defaults to `.`. Additional positional values are not used. Reported targets and source files are always relative to the package root, or to the common workspace root for a workspace; selecting `lib` or one file does not change that path basis.
+The first positional value is a Dart file or directory target. It defaults to `.`. Additional positional values are a usage error (exit code 64). Reported targets and source files are always relative to the package root, or to the common workspace root for a workspace; selecting `lib` or one file does not change that path basis.
 
 ## Common options
 
@@ -68,6 +68,8 @@ dart run hyena_dart analyze [path] [options]
 | `--[no-]complexity` | on | Include or skip complexity analysis. |
 | `--[no-]ignore-exports` | off | Treat exported public API as roots and omit it from dead-code findings. |
 | `--[no-]ignore-private` | off | Treat private declarations as roots and omit them from dead-code findings. |
+
+At least one analyzer must remain enabled; passing both `--no-dead-code` and `--no-complexity` is a usage error (exit code 64).
 
 Examples:
 
@@ -174,6 +176,6 @@ Hyena returns exit code 0 after reporting findings by default. Pass `--fail-on=d
 
 A tool error takes precedence over `--fail-on`. Before v3.0.0, tool errors exited `1`.
 
-A Dart file that fails to resolve, has analysis or syntax errors, or cannot be read is not a tool error. Hyena prints `Warning: skipped <path>: <reason>` to stderr, continues with the rest of the target, and keeps its normal exit code.
+Skipped non-generated files produce `Warning: skipped <path>: <reason>` on stderr; generated files that fail dead-code resolution are silently ignored without a `skippedFiles` entry. Skips do not directly change the exit code, but missing references can cause dead-code findings that trip `--fail-on`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow).
 
 `hyena_mcp` exits `64` for usage errors such as a missing `--root`, and `2` when it cannot start, such as a `--root` directory that does not exist. See [CI and automation](/docs/ci/#exit-codes) for complete examples.

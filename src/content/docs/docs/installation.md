@@ -71,7 +71,7 @@ Before running dead-code analysis, resolve the target package:
 dart pub get
 ```
 
-Dead-code analysis asks the official Dart analyzer to resolve every included Dart file. A file that fails to resolve, has analysis or syntax errors, or cannot be read is skipped: Hyena prints `Warning: skipped <path>: <reason>` to stderr and keeps analyzing the rest of the target. Skipped files do not change the exit code. Complexity-only analysis parses syntax and does not require resolved elements.
+Dead-code analysis asks the official Dart analyzer to resolve every included Dart file. A non-generated file that fails to resolve, has analysis or syntax errors, or cannot be read is skipped: Hyena prints `Warning: skipped <path>: <reason>` to stderr and keeps analyzing the rest of the target. Generated files that fail resolution are silently ignored without a `skippedFiles` entry. Skips do not directly change the exit code, but missing references can cause dead-code findings that trip `--fail-on`; see [Analysis flow](/docs/analysis/dead-code/#analysis-flow). Complexity-only analysis parses syntax and does not require resolved elements.
 
 If the project uses code generation, run it before analysis so generated files are up to date.
 
