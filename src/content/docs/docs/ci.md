@@ -109,7 +109,48 @@ dart run hyena_dart analyze lib \
 
 Because a finding gate can return exit code 1 after writing the report, use an `if: always()` upload step when the artifact must be retained on failures.
 
-## GitHub Actions example
+## GitHub Marketplace Action
+
+The [Hyena Dart Action](https://github.com/marketplace/actions/hyena-dart) installs Dart and Hyena, resolves dependencies, and uploads SARIF results to GitHub code scanning. Add this workflow to a Dart package:
+
+```yaml title=".github/workflows/hyena.yml"
+name: Hyena analysis
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: Chandram-Dutta/hyena_dart@v3.0.1
+        with:
+          path: lib
+          version: '3.0.1'
+```
+
+The action ref pins the workflow implementation; `version` pins the analyzer installed from pub.dev. Findings do not fail the step by default. Add `fail-on: dead-code,complexity` under `with` to fail on findings after uploading the report. Tool errors still fail the run.
+
+For a package in a subdirectory, set `working-directory`; `path`, `config`, and `baseline` are relative to that directory. For Flutter, set up Flutter and run `flutter pub get` first, then set `setup-dart: 'false'` and `pub-get: 'false'`. Code-scanning uploads require GitHub code scanning to be available and `security-events: write`; set `upload: 'false'` to skip the upload. The action exposes `sarif-file` and `exit-code` outputs. See the [input and output definitions](https://github.com/Chandram-Dutta/hyena_dart/blob/v3.0.1/action.yml) for all options and defaults.
+
+### Walk through the demo
+
+The [hyena_dart_demo repository](https://github.com/Chandram-Dutta/hyena_dart_demo) is a small Dart package with a [two-step workflow](https://github.com/Chandram-Dutta/hyena_dart_demo/blob/main/.github/workflows/hyena.yml) that checks out the code and runs the Action on pull requests and pushes to `main`.
+
+1. Open [PR #1: Add shipping rules](https://github.com/Chandram-Dutta/hyena_dart_demo/pull/1), a standing example intended to stay open.
+2. In **Files changed**, inspect `lib/src/shipping.dart`: `shippingCents` exceeds the complexity and nesting thresholds, and `legacyHandlingFeeCents` is unused. The code-scanning annotations show each finding beside the source.
+3. Compare the findings with the passing Hyena check. The demo does not set `fail-on`, so it reports findings without failing the job.
+
+## Manual GitHub Actions alternative
+
+Use the project-local CLI instead when you want to control installation and report handling yourself. This example uses the dependency pinned above and a committed `hyena-baseline.json`:
 
 ```yaml title=".github/workflows/hyena.yml"
 name: Hyena analysis
